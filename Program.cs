@@ -13,7 +13,11 @@ namespace ConsoleApp1
         int VertexArrayObject;
         int ElementBufferObject;
 
-        TextureMap t = new();
+        Matrix4 ModelMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(-55.0f));
+        Matrix4 ViewMatrix = Matrix4.CreateTranslation(0.0f,0.0f,-3.0f);
+        Matrix4 ProjectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), 100 / 100, 0.1f, 100f);
+
+        Texture T1;
 
         Shader shader;
 
@@ -88,10 +92,17 @@ namespace ConsoleApp1
         protected override void OnLoad() // Load graphics here
         {
             base.OnLoad();
+            ProjectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), CurrentMonitor.HorizontalResolution / CurrentMonitor.VerticalResolution, 0.1f, 100f);
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
             shader = new Shader("Assets/Shaders/Default/default.vert", "Assets/Shaders/Default/default.frag");
+
+            shader.SetMatrix4("model", ModelMatrix);
+            shader.SetMatrix4("view", ViewMatrix);
+            shader.SetMatrix4("projection", ProjectionMatrix);
+            shader.SetVec2("texSizes", new Vector2(8.0f,10.0f));
+            shader.SetInt("texIndice",1);
 
             VertexBufferObject = GL.GenBuffer();
             ElementBufferObject = GL.GenBuffer();
@@ -114,9 +125,11 @@ namespace ConsoleApp1
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
-            t.LoadTexture("Assets/Tests/UV_checker_Map_byValle.png");
+            T1 = new Texture("Assets/Images/textures.png", shader.Handle);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            GL.Enable(EnableCap.DepthTest);
 
             // Code goes here
         }
@@ -125,7 +138,13 @@ namespace ConsoleApp1
         {
             base.OnRenderFrame(e);
 
-            GL.Clear(ClearBufferMask.ColorBufferBit);
+            shader.SetMatrix4("model", ModelMatrix);
+            shader.SetMatrix4("view", ViewMatrix);
+            shader.SetMatrix4("projection", ProjectionMatrix);
+            shader.SetVec2("texSizes", new Vector2(8.0f,10.0f));
+            shader.SetInt("texIndice",1);
+
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             shader.Use();
 
@@ -140,6 +159,8 @@ namespace ConsoleApp1
         protected override void OnFramebufferResize(FramebufferResizeEventArgs e) // Adjust the viewport when the window is resized
         {
             base.OnFramebufferResize(e);
+
+            ProjectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), CurrentMonitor.HorizontalResolution / CurrentMonitor.VerticalResolution, 0.1f, 100f);
 
             GL.Viewport(0, 0, e.Width, e.Height);
 

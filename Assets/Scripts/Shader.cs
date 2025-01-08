@@ -1,4 +1,5 @@
 using OpenTK.Graphics.ES30;
+using OpenTK.Mathematics;
 
 namespace ConsoleApp1
 {
@@ -82,6 +83,24 @@ namespace ConsoleApp1
         public int GetAttribLocation(string attribName)
         {
             return GL.GetAttribLocation(Handle, attribName);
+        }
+
+        public void SetInt(string Name, int Value)
+        {
+            int location = GL.GetUniformLocation(Handle, Name);
+            GL.Uniform1(location, Value);
+        }
+
+        public void SetMatrix4(string Name, Matrix4 Value)
+        {
+            int location = GL.GetUniformLocation(Handle, Name);
+            GL.UniformMatrix4(location, true, ref Value);
+        }
+
+        public void SetVec2(string Name, Vector2 Value)
+        {
+            int location = GL.GetUniformLocation(Handle, Name);
+            GL.Uniform2(location, Value);
         }
     }
 }
