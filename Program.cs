@@ -3,7 +3,6 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Graphics.OpenGL4;
-using System.Diagnostics;
 
 namespace ConsoleApp1
 {
@@ -12,15 +11,23 @@ namespace ConsoleApp1
 
         int VertexBufferObject;
         int VertexArrayObject;
+        int ElementBufferObject;
+
+        TextureMap t = new();
 
         Shader shader;
 
-        float[] Vertices = 
+        float[] Vertices =
         {
-            // positions        // colors
-            0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
-            -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
-            0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
+            //Position          Texture coordinates
+            0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
+            0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
+            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
+        };
+        uint[] indices = {  // note that we start from 0!
+            0, 1, 3,   // first triangle
+            1, 2, 3    // second triangle
         };
 
         protected override void OnUpdateFrame(FrameEventArgs e) // Update game logic here
@@ -87,24 +94,29 @@ namespace ConsoleApp1
             shader = new Shader("Assets/Shaders/Default/default.vert", "Assets/Shaders/Default/default.frag");
 
             VertexBufferObject = GL.GenBuffer();
-
+            ElementBufferObject = GL.GenBuffer();
             VertexArrayObject = GL.GenVertexArray();
+
             GL.BindVertexArray(VertexArrayObject);
 
+            // Indices
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+
+            // Vertices
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
             GL.BufferData(BufferTarget.ArrayBuffer, Vertices.Length * sizeof(float), Vertices, BufferUsageHint.StaticDraw);
 
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
-            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
-            GL.EnableVertexAttribArray(1);
+
+            int texCoordLocation = shader.GetAttribLocation("aTexCoord");
+            GL.EnableVertexAttribArray(texCoordLocation);
+            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+
+            t.LoadTexture("Assets/Tests/UV_checker_Map_byValle.png", "test", shader);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
-
-            // ElementBufferObject = GL.GenBuffer();
-            // GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-            // GL.BufferData(BufferTarget.ElementArrayBuffer, Indices.Length * sizeof(uint), Indices, BufferUsageHint.StaticDraw);
-
 
             // Code goes here
         }
@@ -118,10 +130,7 @@ namespace ConsoleApp1
             shader.Use();
 
             GL.BindVertexArray(VertexArrayObject);
-            GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
-
-            
-
+            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Code goes here
 

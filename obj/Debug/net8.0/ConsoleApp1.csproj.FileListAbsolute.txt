@@ -69,3 +69,4 @@ E:/Coding/CSHARP/ConsoleApp1/bin/Debug/net8.0/Assets/Shaders/Default/default.ver
 /home/zephyros/Coding/CS/ConsoleApp1/obj/Debug/net8.0/ConsoleApp1.pdb
 /home/zephyros/Coding/CS/ConsoleApp1/obj/Debug/net8.0/ConsoleApp1.genruntimeconfig.cache
 /home/zephyros/Coding/CS/ConsoleApp1/obj/Debug/net8.0/ref/ConsoleApp1.dll
+/home/zephyros/Coding/CS/ConsoleApp1/bin/Debug/net8.0/StbImageSharp.dll

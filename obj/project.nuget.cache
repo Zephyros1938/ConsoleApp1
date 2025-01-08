@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "us5J4XTuvNL25QYShZF24SSpZTW3GLSCBcC8+53AuGV9xlB9zSv4I0aegMTQ3gdp/oAUHyFlaw2CGBNPUEm7EA==",
+  "dgSpecHash": "GwIVSsjdfaInG8ByoIPOAPq5jEkEJ8Y4oyTFExTyKIvp81Er7lQkIv0k2gMQmuRvWWUoUHJa/6du2oO+eD44uQ==",
   "success": true,
   "projectFilePath": "/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj",
   "expectedPackageFiles": [
@@ -15,6 +15,7 @@
     "/home/zephyros/.nuget/packages/opentk.windowing.common/4.9.3/opentk.windowing.common.4.9.3.nupkg.sha512",
     "/home/zephyros/.nuget/packages/opentk.windowing.desktop/4.9.3/opentk.windowing.desktop.4.9.3.nupkg.sha512",
     "/home/zephyros/.nuget/packages/opentk.windowing.graphicslibraryframework/4.9.3/opentk.windowing.graphicslibraryframework.4.9.3.nupkg.sha512",
+    "/home/zephyros/.nuget/packages/stbimagesharp/2.30.15/stbimagesharp.2.30.15.nupkg.sha512",
     "/home/zephyros/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
     "/home/zephyros/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.10/microsoft.aspnetcore.app.ref.8.0.10.nupkg.sha512"
   ],
