@@ -5,7 +5,7 @@ namespace ConsoleApp1
     public class Shader
     {
 
-        int Handle;
+        public readonly int Handle;
         private bool disposedValue;
 
         public Shader(string vertexPath, string fragmentPath)
@@ -77,6 +77,11 @@ namespace ConsoleApp1
                 Console.WriteLine($"GPU Resource Leak! Did you forget to call Dispose()?\n\tShader was not properly disposed: {Handle}");
                 Dispose(disposing: false);
             }
+        }
+
+        public int GetAttribLocation(string attribName)
+        {
+            return GL.GetAttribLocation(Handle, attribName);
         }
     }
 }

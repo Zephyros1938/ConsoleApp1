@@ -3,6 +3,7 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Graphics.OpenGL4;
+using System.Diagnostics;
 
 namespace ConsoleApp1
 {
@@ -14,10 +15,12 @@ namespace ConsoleApp1
 
         Shader shader;
 
-        float[] Vertices = {
-            -0.5f, -0.5f, 0.0f, // Bottom-left vertex
-            0.5f, -0.5f, 0.0f, // Bottom-right vertex
-            0.0f,  0.5f, 0.0f  // Top vertex
+        float[] Vertices = 
+        {
+            // positions        // colors
+            0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,   // bottom right
+            -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,   // bottom left
+            0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f    // top 
         };
 
         protected override void OnUpdateFrame(FrameEventArgs e) // Update game logic here
@@ -91,10 +94,17 @@ namespace ConsoleApp1
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
             GL.BufferData(BufferTarget.ArrayBuffer, Vertices.Length * sizeof(float), Vertices, BufferUsageHint.StaticDraw);
 
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
+            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
+            GL.EnableVertexAttribArray(1);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+
+            // ElementBufferObject = GL.GenBuffer();
+            // GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
+            // GL.BufferData(BufferTarget.ElementArrayBuffer, Indices.Length * sizeof(uint), Indices, BufferUsageHint.StaticDraw);
+
 
             // Code goes here
         }
@@ -106,8 +116,11 @@ namespace ConsoleApp1
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             shader.Use();
+
             GL.BindVertexArray(VertexArrayObject);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 3);
+
+            
 
 
             // Code goes here
@@ -133,29 +146,6 @@ namespace ConsoleApp1
             // Code goes here
         }
 
-        Vector2i GetBestResolution(Vector2i monitorResolution)
-        {
-            // Get all resolutions from the Resolutions class
-            var resolutions = typeof(Resolutions)
-                .GetFields()
-                .Select(static f => (Vector2i)f.GetValue(null))
-                .OrderByDescending(r => r.X * r.Y) // Sort by resolution area (width * height)
-                .ToList();
-
-            // Find the largest resolution that fits within the monitor dimensions
-            foreach (var resolution in resolutions)
-            {
-                if (resolution.X <= monitorResolution.X && resolution.Y <= monitorResolution.Y)
-                {
-                    return resolution;
-                }
-            }
-
-            // If no suitable resolution is found, return the smallest resolution as a fallback
-            Console.WriteLine("No suitable resolution found. Using the smallest resolution as a fallback.");
-            return resolutions.Last();
-        }
-
         /// <summary>
         /// Set the window size to the best resolution that fits within the monitor dimensions
         /// </summary>
@@ -166,7 +156,7 @@ namespace ConsoleApp1
             {
                 resolution = new Vector2i(CurrentMonitor.HorizontalResolution, CurrentMonitor.VerticalResolution);
             }
-            Size = GetBestResolution(resolution.Value);
+            Size = Resolution.GetBestResolution(resolution.Value);
         }
 
         /// <summary>

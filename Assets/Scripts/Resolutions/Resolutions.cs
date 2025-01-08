@@ -43,4 +43,33 @@ namespace ConsoleApp1
         public static readonly Vector2i Panoramic_2560x1080 = new(2560, 1080); // 21:9
         public static readonly Vector2i SuperUltraWide_3840x1080 = new(3840, 1080); // 32:9
     }
+
+    public class Resolution
+    {
+
+#pragma warning disable CS8605
+        public static Vector2i GetBestResolution(Vector2i monitorResolution)
+        {
+            // Get all resolutions from the Resolutions class
+            var resolutions = typeof(Resolutions)
+                .GetFields()
+                .Select(static f => (Vector2i)f.GetValue(null))
+                .OrderByDescending(r => r.X * r.Y) // Sort by resolution area (width * height)
+                .ToList();
+
+            // Find the largest resolution that fits within the monitor dimensions
+            foreach (var resolution in resolutions)
+            {
+                if (resolution.X <= monitorResolution.X && resolution.Y <= monitorResolution.Y)
+                {
+                    return resolution;
+                }
+            }
+
+            // If no suitable resolution is found, return the smallest resolution as a fallback
+            Console.WriteLine("No suitable resolution found. Using the smallest resolution as a fallback.");
+            return resolutions.Last();
+        }
+#pragma warning restore CS8605
+    }
 }
