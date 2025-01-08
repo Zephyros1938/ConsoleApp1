@@ -114,7 +114,7 @@ namespace ConsoleApp1
             GL.EnableVertexAttribArray(texCoordLocation);
             GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
 
-            t.LoadTexture("Assets/Tests/UV_checker_Map_byValle.png", "test", shader);
+            t.LoadTexture("Assets/Tests/UV_checker_Map_byValle.png");
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 

@@ -9,7 +9,7 @@ namespace ConsoleApp1
 
     public class TextureMap
     {
-        public void LoadTexture(String path, String name, Shader shader)
+        public void LoadTexture(String path)
         {
             StbImage.stbi_set_flip_vertically_on_load(1);
             ImageResult image = ImageResult.FromStream(File.OpenRead(path), ColorComponents.RedGreenBlueAlpha);
