@@ -91,6 +91,12 @@ namespace ConsoleApp1
             GL.Uniform1(location, Value);
         }
 
+        public void SetFloat(string Name, float Value)
+        {
+            int location = GL.GetUniformLocation(Handle, Name);
+            GL.Uniform1(location, Value);
+        }
+
         public void SetMatrix4(string Name, Matrix4 Value)
         {
             int location = GL.GetUniformLocation(Handle, Name);

@@ -3,6 +3,8 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Graphics.OpenGL4;
+using Microsoft.VisualBasic;
+using System.Collections.ObjectModel;
 
 namespace ConsoleApp1
 {
@@ -14,12 +16,15 @@ namespace ConsoleApp1
         int ElementBufferObject;
 
         Matrix4 ModelMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(-55.0f));
-        Matrix4 ViewMatrix = Matrix4.CreateTranslation(0.0f,0.0f,-3.0f);
+        Matrix4 ViewMatrix = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
         Matrix4 ProjectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), 100 / 100, 0.1f, 100f);
 
         Texture T1;
 
         Shader shader;
+
+        Vector2 size = new(8.0f, 10.0f);
+        float index = 10;
 
         float[] Vertices =
         {
@@ -101,8 +106,8 @@ namespace ConsoleApp1
             shader.SetMatrix4("model", ModelMatrix);
             shader.SetMatrix4("view", ViewMatrix);
             shader.SetMatrix4("projection", ProjectionMatrix);
-            shader.SetVec2("texSizes", new Vector2(8.0f,10.0f));
-            shader.SetInt("texIndice",1);
+            shader.SetVec2("texSizes", size);
+            shader.SetFloat("texIndice", index);
 
             VertexBufferObject = GL.GenBuffer();
             ElementBufferObject = GL.GenBuffer();
@@ -141,8 +146,8 @@ namespace ConsoleApp1
             shader.SetMatrix4("model", ModelMatrix);
             shader.SetMatrix4("view", ViewMatrix);
             shader.SetMatrix4("projection", ProjectionMatrix);
-            shader.SetVec2("texSizes", new Vector2(8.0f,10.0f));
-            shader.SetInt("texIndice",1);
+            shader.SetVec2("texSizes", size);
+            shader.SetFloat("texIndice", index);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 

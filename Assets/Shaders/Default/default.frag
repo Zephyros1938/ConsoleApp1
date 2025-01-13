@@ -6,12 +6,15 @@ in vec2 texCoord;
 uniform sampler2D texture0;
 
 uniform vec2 texSizes;
-uniform uint texIndice;
+uniform float texIndice;
 
 void main()
 {
-    float x = mod(texIndice, texSizes.y);
-    float y = floor(texIndice / texSizes.x);
+    float x = floor(texIndice / texSizes.x);
+    float y = mod(texIndice, texSizes.y);
+
+    vec2 pos = vec2((1.0/texSizes.x)*x,(1.0/texSizes.y)*y);
+    vec2 texCoordMag = texCoord*(vec2(1.0,1.0)/texSizes);
     
-    FragColor = texture(texture0, texCoord * vec2(x,y));
+    FragColor = texture(texture0, texCoordMag+pos);
 }

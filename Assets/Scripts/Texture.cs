@@ -16,6 +16,7 @@ namespace ConsoleApp1
             this.Handle = Handle;
             this.Path = location;
             this.Tex = LoadTexture(location);
+            //StbImage.stbi_set_flip_vertically_on_load(1);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
