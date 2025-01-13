@@ -33,8 +33,6 @@ e:/Coding/CSHARP/ConsoleApp1/bin/Debug/net8.0/assets/tests/test.txt
 e:/Coding/CSHARP/ConsoleApp1/bin/Debug/net8.0/assets/tests/UV_checker_Map_byValle.png
 E:/Coding/CSHARP/ConsoleApp1/bin/Debug/net8.0/Assets/Shaders/Default/default.frag
 E:/Coding/CSHARP/ConsoleApp1/bin/Debug/net8.0/Assets/Shaders/Default/default.vert
-/home/zephyros/Coding/CS/ConsoleApp1/bin/Debug/net8.0/Assets/Shaders/Default/default.frag
-/home/zephyros/Coding/CS/ConsoleApp1/bin/Debug/net8.0/Assets/Shaders/Default/default.vert
 /home/zephyros/Coding/CS/ConsoleApp1/bin/Debug/net8.0/Assets/Tests/test.txt
 /home/zephyros/Coding/CS/ConsoleApp1/bin/Debug/net8.0/Assets/Tests/UV_checker_Map_byValle.png
 /home/zephyros/Coding/CS/ConsoleApp1/bin/Debug/net8.0/ConsoleApp1
@@ -91,3 +89,6 @@ E:/Coding/CSHARP/ConsoleApp1/bin/Debug/net8.0/Assets/Shaders/Default/default.ver
 /home/zephyros/Coding/CS/ConsoleApp1/bin/Debug/net8.0/Assets/Images/textures.png
 /home/zephyros/Coding/CS/ConsoleApp1/bin/Debug/net8.0/Assets/Images/textures_tr.png
 /home/zephyros/Coding/CS/ConsoleApp1/bin/Debug/net8.0/Assets/Images/water_lod2.png
+/home/zephyros/Coding/CS/ConsoleApp1/bin/Debug/net8.0/Assets/Shaders/Default/tile.frag
+/home/zephyros/Coding/CS/ConsoleApp1/bin/Debug/net8.0/Assets/Shaders/Default/tile.vert
+/home/zephyros/Coding/CS/ConsoleApp1/bin/Debug/net8.0/Assets/ModelInfo/textures.minfo

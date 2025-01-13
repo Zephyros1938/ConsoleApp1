@@ -19,79 +19,54 @@ namespace ConsoleApp1
         Matrix4 ViewMatrix = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
         Matrix4 ProjectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), 100 / 100, 0.1f, 100f);
 
+
+
         Texture T1;
 
         Shader shader;
 
         Vector2 size = new(8.0f, 10.0f);
-        float index = 10;
+        float index = 0;
 
         float[] Vertices =
         {
             //Position          Texture coordinates
-            0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right
-            0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right
-            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left
-            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
+            0.5f,  0.5f, 0.5f, 1.0f, 1.0f, // top right (0)
+            0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right (1)
+            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom left (2)
+            -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left (3)
         };
         uint[] indices = {  // note that we start from 0!
             0, 1, 3,   // first triangle
             1, 2, 3    // second triangle
         };
 
+        /*
+            sends triangles in order of 0,1,2, and then 2nd being 1,2,3
+        */
+
         protected override void OnUpdateFrame(FrameEventArgs e) // Update game logic here
         {
             base.OnUpdateFrame(e);
 
-            Keys? pressedKey = null;
-
-            // Find the first key that is pressed
-            foreach (Keys key in Enum.GetValues(typeof(Keys)))
+            if(!IsFocused)
             {
-                if (key.GetHashCode() > 0)
-                {
-                    if (KeyboardState.IsKeyPressed(key))
-                    {
-                        pressedKey = key;
-                        break;
-                    }
-                }
+                return;
+            }
+
+            KeyboardState input = KeyboardState;
+
+            if(input.IsKeyDown(Keys.Escape))
+            {
+                Close();
+            }
+
+            if(input.IsKeyDown(Keys.S))
+            {
 
             }
 
-            if (pressedKey.HasValue)
-            {
-                switch (pressedKey.Value)
-                {
-                    case Keys.Escape:
-                        Close();
-                        break;
-
-                    case Keys.Backspace:
-                        Console.Write("\b \b");
-                        break;
-
-                    case Keys.Space:
-                        Console.Write(' ');
-                        break;
-
-                    case Keys.Enter:
-                        Console.Write('\n'); // Equivalent to '\n'
-                        break;
-
-                    case Keys.Tab:
-                        Console.Write('\t');
-                        break;
-
-                    default:
-                        // Print the key if it's valid
-                        if (pressedKey.Value.GetHashCode() is > 0 and < 512)
-                        {
-                            Console.Write(pressedKey.Value);
-                        }
-                        break;
-                }
-            }
+            
         }
 
         protected override void OnLoad() // Load graphics here
@@ -101,7 +76,7 @@ namespace ConsoleApp1
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-            shader = new Shader("Assets/Shaders/Default/default.vert", "Assets/Shaders/Default/default.frag");
+            shader = new Shader("Assets/Shaders/Default/tile.vert", "Assets/Shaders/Default/tile.frag");
 
             shader.SetMatrix4("model", ModelMatrix);
             shader.SetMatrix4("view", ViewMatrix);
