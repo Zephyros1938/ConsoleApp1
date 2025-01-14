@@ -3,8 +3,6 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using OpenTK.Graphics.OpenGL4;
-using Microsoft.VisualBasic;
-using System.Collections.ObjectModel;
 
 namespace ConsoleApp1
 {
@@ -14,12 +12,11 @@ namespace ConsoleApp1
         int VertexBufferObject;
         int VertexArrayObject;
         int ElementBufferObject;
+        bool firstMove = true;
 
-        Matrix4 ModelMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(-55.0f));
-        Matrix4 ViewMatrix = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
-        Matrix4 ProjectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), 100 / 100, 0.1f, 100f);
+        Matrix4 ModelMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.0f));
 
-
+        readonly Viewing.Camera camera = new(new Vector3(0.0f, 0.0f, 3.0f));
 
         Texture T1;
 
@@ -31,9 +28,9 @@ namespace ConsoleApp1
         float[] Vertices =
         {
             //Position          Texture coordinates
-            0.5f,  0.5f, 0.5f, 1.0f, 1.0f, // top right (0)
+            0.5f,  0.5f, 0.0f, 1.0f, 1.0f, // top right (0)
             0.5f, -0.5f, 0.0f, 1.0f, 0.0f, // bottom right (1)
-            -0.5f, -0.5f, 0.5f, 0.0f, 0.0f, // bottom left (2)
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, // bottom left (2)
             -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left (3)
         };
         uint[] indices = {  // note that we start from 0!
@@ -45,42 +42,82 @@ namespace ConsoleApp1
             sends triangles in order of 0,1,2, and then 2nd being 1,2,3
         */
 
+        protected override void OnMouseMove(MouseMoveEventArgs e)
+        {
+            base.OnMouseMove(e);
+            if (firstMove)
+            {
+                camera.UpdateLastPos(new Vector2(e.X, e.Y));
+                firstMove = false;
+            }
+            else
+            {
+                Vector2 currentPos = new Vector2(e.X, e.Y);
+                camera.UpdateRotation(currentPos);
+            }
+            camera.Rotate();
+
+        }
+
         protected override void OnUpdateFrame(FrameEventArgs e) // Update game logic here
         {
             base.OnUpdateFrame(e);
 
-            if(!IsFocused)
+            if (!IsFocused)
             {
                 return;
             }
 
             KeyboardState input = KeyboardState;
 
-            if(input.IsKeyDown(Keys.Escape))
+            if (input.IsKeyDown(Keys.Escape))
             {
                 Close();
             }
 
-            if(input.IsKeyDown(Keys.S))
+            if (input.IsKeyDown(Keys.S))
             {
-
+                camera.Backward((float)e.Time);
             }
 
-            
+            if (input.IsKeyDown(Keys.W))
+            {
+                camera.Forward((float)e.Time);
+            }
+
+            if (input.IsKeyDown(Keys.A))
+            {
+                camera.Left((float)e.Time);
+            }
+
+            if (input.IsKeyDown(Keys.D))
+            {
+                camera.Right((float)e.Time);
+            }
+
+            if (input.IsKeyDown(Keys.Space))
+            {
+                camera.Up((float)e.Time);
+            }
+
+            if (input.IsKeyDown(Keys.LeftShift))
+            {
+                camera.Down((float)e.Time);
+            }
         }
 
         protected override void OnLoad() // Load graphics here
         {
             base.OnLoad();
-            ProjectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), CurrentMonitor.HorizontalResolution / CurrentMonitor.VerticalResolution, 0.1f, 100f);
+            camera.SetProjection(45.0f, CurrentMonitor.HorizontalResolution / CurrentMonitor.VerticalResolution, 0.1f, 100f);
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
             shader = new Shader("Assets/Shaders/Default/tile.vert", "Assets/Shaders/Default/tile.frag");
 
             shader.SetMatrix4("model", ModelMatrix);
-            shader.SetMatrix4("view", ViewMatrix);
-            shader.SetMatrix4("projection", ProjectionMatrix);
+            shader.SetMatrix4("view", camera.GetViewMatrix());
+            shader.SetMatrix4("projection", camera.GetProjectionMatrix());
             shader.SetVec2("texSizes", size);
             shader.SetFloat("texIndice", index);
 
@@ -111,6 +148,8 @@ namespace ConsoleApp1
 
             GL.Enable(EnableCap.DepthTest);
 
+            CursorState = CursorState.Grabbed;
+
             // Code goes here
         }
 
@@ -119,8 +158,8 @@ namespace ConsoleApp1
             base.OnRenderFrame(e);
 
             shader.SetMatrix4("model", ModelMatrix);
-            shader.SetMatrix4("view", ViewMatrix);
-            shader.SetMatrix4("projection", ProjectionMatrix);
+            shader.SetMatrix4("view", camera.GetViewMatrix());
+            shader.SetMatrix4("projection", camera.GetProjectionMatrix());
             shader.SetVec2("texSizes", size);
             shader.SetFloat("texIndice", index);
 
@@ -140,7 +179,7 @@ namespace ConsoleApp1
         {
             base.OnFramebufferResize(e);
 
-            ProjectionMatrix = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), CurrentMonitor.HorizontalResolution / CurrentMonitor.VerticalResolution, 0.1f, 100f);
+            camera.SetProjection(45.0f, CurrentMonitor.HorizontalResolution / CurrentMonitor.VerticalResolution, 0.1f, 100f);
 
             GL.Viewport(0, 0, e.Width, e.Height);
 
