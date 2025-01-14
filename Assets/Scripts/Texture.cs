@@ -8,15 +8,15 @@ namespace ConsoleApp1
     public class Texture
     {
         public readonly ImageResult Tex;
-        public readonly String Path;
+        public readonly string Path;
         public readonly int Handle;
 
         public Texture(String location, int Handle)
         {
             this.Handle = Handle;
             this.Path = location;
+            StbImage.stbi_set_flip_vertically_on_load(1);
             this.Tex = LoadTexture(location);
-            //StbImage.stbi_set_flip_vertically_on_load(1);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
