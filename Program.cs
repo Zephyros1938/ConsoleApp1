@@ -16,7 +16,7 @@ namespace ConsoleApp1
 
         Matrix4 ModelMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.0f));
 
-        readonly Viewing.Camera camera = new(new Vector3(0.0f, 0.0f, 3.0f));
+        public readonly Viewing.Camera camera = new(new Vector3(0.0f, 0.0f, 3.0f));
 
         Texture T1;
 
@@ -242,6 +242,7 @@ namespace ConsoleApp1
                 // Center the window on the screen
                 game.WindowBorder = WindowBorder.Hidden;
                 game.CenterWindow();
+                game.camera.SetProjection(45.0f, game.CurrentMonitor.HorizontalResolution / game.CurrentMonitor.VerticalResolution, 0.1f, 100f);
 
                 // Run the game
                 game.Run();
