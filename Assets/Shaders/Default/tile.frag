@@ -16,5 +16,5 @@ void main()
     vec2 pos = vec2((1.0/texSizes.x)*x,(1.0/texSizes.y)*y);
     vec2 texCoordMag = texCoord*(vec2(1.0,1.0)/texSizes);
     
-    FragColor = texture(texture0, texCoordMag+pos);
+    FragColor = texture(texture0, texCoord);
 }

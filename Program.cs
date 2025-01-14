@@ -25,6 +25,8 @@ namespace ConsoleApp1
         Vector2 size = new(8.0f, 10.0f);
         float index = 0;
 
+        
+
         float[] Vertices =
         {
             //Position          Texture coordinates
@@ -129,11 +131,11 @@ namespace ConsoleApp1
 
             // Indices
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, Testing.Testing._indices.Length * sizeof(uint), Testing.Testing._indices, BufferUsageHint.StaticDraw);
 
             // Vertices
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, Vertices.Length * sizeof(float), Vertices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, Testing.Testing._vertices.Length * sizeof(float), Testing.Testing._vertices, BufferUsageHint.StaticDraw);
 
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
@@ -168,7 +170,7 @@ namespace ConsoleApp1
             shader.Use();
 
             GL.BindVertexArray(VertexArrayObject);
-            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Triangles, Testing.Testing._indices.Length, DrawElementsType.UnsignedInt, 0);
 
             // Code goes here
 
