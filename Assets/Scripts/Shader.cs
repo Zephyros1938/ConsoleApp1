@@ -1,7 +1,7 @@
 using OpenTK.Graphics.ES30;
 using OpenTK.Mathematics;
 
-namespace ConsoleApp1
+namespace ConsoleApp1.Shaders
 {
     public class Shader
     {

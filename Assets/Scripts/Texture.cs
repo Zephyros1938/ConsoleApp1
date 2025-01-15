@@ -2,7 +2,7 @@ using OpenTK.Graphics.ES20;
 using OGL = OpenTK.Graphics.OpenGL;
 using StbImageSharp;
 
-namespace ConsoleApp1
+namespace ConsoleApp1.Shaders
 {
 
     public class Texture
