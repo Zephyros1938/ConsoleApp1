@@ -14,17 +14,13 @@ namespace ConsoleApp1
         {
             using (var game = new Game(Resolutions.Medium_1280x720.X, Resolutions.Medium_1280x720.Y, "Hello World!", GameWindowSettings.Default))
             {
-                // Set the window border to a fixed size
-                game.WindowBorder = WindowBorder.Hidden;
 
                 // Get the monitor resolution and set the window size to the best resolution
                 var res = new Vector2i(game.CurrentMonitor.HorizontalResolution, game.CurrentMonitor.VerticalResolution);
                 Console.WriteLine($"Monitor Resolution: {res.X}x{res.Y}");
-                game.SetBestResolution(res);
 
                 // Center the window on the screen
                 game.CenterWindow();
-                game.camera.SetProjection(45.0f, game.CurrentMonitor.HorizontalResolution / game.CurrentMonitor.VerticalResolution, 0.1f, 100f);
 
                 // Run the game
                 game.Run();

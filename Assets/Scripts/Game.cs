@@ -10,34 +10,50 @@ namespace ConsoleApp1
 {
     public class Game(int width, int height, string title, GameWindowSettings gameWindowSettings) : GameWindow(gameWindowSettings, new NativeWindowSettings() { ClientSize = (width, height), Title = title })
     {
-
-        int VertexBufferObject;
-        int VertexArrayObject;
-        int ElementBufferObject;
         bool firstMove = true;
 
         Matrix4 ModelMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.0f));
 
         public readonly Camera camera = new(new(0.0f, 0.0f, 3.0f));
 
-        Texture T1;
+        Texture? T1 = null;
+        ShaderProgram shaderProgram;
 
-        Shader shader;
+        World.World world = new();
 
-        Vector2 size = new(8.0f, 10.0f);
-        float index = 0;
+        readonly float[] vertices =
+        [
+            0.5f, 0.5f, 0.5f,
+            0.5f, -0.5f, 0.5f,
+            -0.5f, -0.5f, 0.5f,
+            -0.5f, 0.5f, 0.5f,
+        ];
+
+        readonly float[] texCoords =
+        [
+            1f,1f,
+            1f,0f,
+            0f,0f,
+            0f,1f
+        ];
+
+        readonly uint[] indices =
+        [
+            0,1,3,
+            1,2,3
+        ];
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
             base.OnMouseMove(e);
             if (firstMove)
             {
-                camera.UpdateLastPos(new Vector2(e.X, e.Y));
+                camera.UpdateLastPos(new(e.X, e.Y));
                 firstMove = false;
             }
             else
             {
-                Vector2 currentPos = new Vector2(e.X, e.Y);
+                Vector2 currentPos = new(e.X, e.Y);
                 camera.UpdateRotation(currentPos);
             }
             camera.Rotate();
@@ -94,39 +110,29 @@ namespace ConsoleApp1
         protected override void OnLoad() // Load graphics here
         {
             base.OnLoad();
-            camera.SetProjection(45.0f, CurrentMonitor.HorizontalResolution / CurrentMonitor.VerticalResolution, 0.1f, 100f);
+            world = new();
+            world.Generate();
+            camera.SetProjection(45.0f, (float)width / height);
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-            shader = new("Assets/Shaders/Default/tile.vert", "Assets/Shaders/Default/tile.frag");
-            T1 = new("Assets/Tests/UV_checker_Map_byValle.png", shader.Handle);
+            shaderProgram = new("Assets/Shaders/Default/default.vert", "Assets/Shaders/Default/default.frag");
+            T1 = new("Assets/Tests/UV_checker_Map_byValle.png", shaderProgram.GetShaderHandle());
 
-            shader.SetMatrix4("model", ModelMatrix);
-            shader.SetMatrix4("view", camera.GetViewMatrix());
-            shader.SetMatrix4("projection", camera.GetProjectionMatrix());
-            shader.SetVec2("texSizes", size);
-            shader.SetFloat("texIndice", index);
+            shaderProgram.SetMatrix4("model", ModelMatrix);
+            shaderProgram.SetMatrix4("view", camera.GetViewMatrix());
+            shaderProgram.SetMatrix4("projection", camera.GetProjectionMatrix());
 
-            VertexBufferObject = GL.GenBuffer();
-            ElementBufferObject = GL.GenBuffer();
-            VertexArrayObject = GL.GenVertexArray();
-
-            GL.BindVertexArray(VertexArrayObject);
+            shaderProgram.Bind();
 
             // Indices
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, Testing.Testing._indices.Length * sizeof(uint), Testing.Testing._indices, BufferUsageHint.StaticDraw);
+            shaderProgram.SetIndices(indices);
 
             // Vertices
-            GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, Testing.Testing._vertices.Length * sizeof(float), Testing.Testing._vertices, BufferUsageHint.StaticDraw);
+            ShaderProgram.SetArrayBuffer(0, 3, VertexAttribPointerType.Float, false, 3, 0, vertices);
 
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
-            GL.EnableVertexAttribArray(0);
-
-            int texCoordLocation = shader.GetAttribLocation("aTexCoord");
-            GL.EnableVertexAttribArray(texCoordLocation);
-            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+            // Colors
+            ShaderProgram.SetArrayBuffer(1, 2, VertexAttribPointerType.Float, false, 2, 0, texCoords);
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
@@ -141,18 +147,16 @@ namespace ConsoleApp1
         {
             base.OnRenderFrame(e);
 
-            shader.SetMatrix4("model", ModelMatrix);
-            shader.SetMatrix4("view", camera.GetViewMatrix());
-            shader.SetMatrix4("projection", camera.GetProjectionMatrix());
-            shader.SetVec2("texSizes", size);
-            shader.SetFloat("texIndice", index);
+            shaderProgram.SetMatrix4("model", ModelMatrix);
+            shaderProgram.SetMatrix4("view", camera.GetViewMatrix());
+            shaderProgram.SetMatrix4("projection", camera.GetProjectionMatrix());
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            shader.Use();
-
-            GL.BindVertexArray(VertexArrayObject);
-            GL.DrawElements(PrimitiveType.Triangles, Testing.Testing._indices.Length, DrawElementsType.UnsignedInt, 0);
+            T1.Use();
+            shaderProgram.Use();
+            shaderProgram.Bind();
+            shaderProgram.Draw();
 
             // Code goes here
 
@@ -163,9 +167,9 @@ namespace ConsoleApp1
         {
             base.OnFramebufferResize(e);
 
-            camera.SetProjection(45.0f, CurrentMonitor.HorizontalResolution / CurrentMonitor.VerticalResolution, 0.1f, 100f);
+            GL.Viewport(this.ClientRectangle);
 
-            GL.Viewport(0, 0, e.Width, e.Height);
+            camera.SetProjection(45.0f, (float)e.Width / e.Height);
 
             Console.WriteLine($"New framebuffer size: {e.Width}x{e.Height}");
         }
@@ -174,7 +178,7 @@ namespace ConsoleApp1
         {
             base.OnUnload();
 
-            shader.Dispose();
+            shaderProgram.shader.Dispose();
 
             // Code goes here
         }

@@ -109,4 +109,76 @@ namespace ConsoleApp1.Shaders
             GL.Uniform2(location, Value);
         }
     }
+
+    public class ShaderProgram(string vertexPath, string fragmentPath)
+    {
+        public readonly Shader shader = new(vertexPath, fragmentPath);
+        readonly int VertexArrayObject = GL.GenVertexArray();
+        int indicesLength = 0;
+
+        Texture[]? textures;
+
+        public void SetIndices(uint[] indices)
+        {
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, GL.GenBuffer());
+            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+            indicesLength = indices.Length;
+        }
+
+        public static void SetArrayBuffer(int index, int size, VertexAttribPointerType type, bool normalized, int stride, int offset, float[] data)
+        {
+            GL.BindBuffer(BufferTarget.ArrayBuffer, GL.GenBuffer());
+            GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(float), data, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(index, size, type, normalized, stride * sizeof(float), offset);
+            GL.EnableVertexAttribArray(index);
+        }
+
+        public void Bind()
+        {
+            GL.BindVertexArray(VertexArrayObject);
+        }
+
+        public static void Unbind()
+        {
+            GL.BindVertexArray(0);
+        }
+
+        public void Draw()
+        {
+            GL.DrawElements(PrimitiveType.Triangles, indicesLength, DrawElementsType.UnsignedInt, 0);
+        }
+
+        public void Use()
+        {
+            shader.Use();
+        }
+
+        public int GetAttribLocation(string attribName)
+        {
+            return shader.GetAttribLocation(attribName);
+        }
+
+        public int GetShaderHandle() => shader.Handle;
+
+        public void SetInt(string Name, int Value)
+        {
+            shader.SetInt(Name, Value);
+        }
+
+        public void SetFloat(string Name, float Value)
+        {
+            shader.SetFloat(Name, Value);
+        }
+
+        public void SetMatrix4(string Name, Matrix4 Value)
+        {
+            shader.SetMatrix4(Name, Value);
+        }
+
+        public void SetVec2(string Name, Vector2 Value)
+        {
+            shader.SetVec2(Name, Value);
+        }
+
+    }
 }

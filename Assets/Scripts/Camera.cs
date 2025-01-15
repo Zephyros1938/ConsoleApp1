@@ -1,3 +1,4 @@
+using ConsoleApp1.Utilities;
 using OpenTK.Mathematics;
 
 namespace ConsoleApp1.Viewing
@@ -9,6 +10,8 @@ namespace ConsoleApp1.Viewing
 
         public float pitch;
         public float yaw;
+        float near = 0.01f;
+        float far = 100.0f;
 
         Vector3 cameraTarget = Vector3.Zero;
 
@@ -19,7 +22,7 @@ namespace ConsoleApp1.Viewing
         Vector2 lastPos = new(0.0f, 0.0f);
 
         Matrix4 view;
-        Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), 100 / 100, 0.1f, 100f);
+        Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), 100 / 100, .01f, 100f);
 
         public Camera(Vector3? position = null, Matrix4? projection = null)
         {
@@ -36,6 +39,9 @@ namespace ConsoleApp1.Viewing
 
         public void SetPosition(Vector3 position) => this.position = position;
         public void SetSpeed(float speed) => this.speed = speed;
+        public void SetNear(float near) => this.near = near;
+        public void SetFar(float far) => this.far = far;
+        public void SetNearFar(float near, float far) { SetNear(near); SetFar(far); }
         public void SetSensitivity(float sensitivity) => this.sensitivity = sensitivity;
         /// <summary>
         /// Sets the projection matrix of the camera.
@@ -44,7 +50,19 @@ namespace ConsoleApp1.Viewing
         /// <param name="aspect"></param>
         /// <param name="near"></param>
         /// <param name="far"></param>
-        public void SetProjection(float fov, float aspect, float near, float far) => projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(fov), aspect, near, far);
+        public void SetProjection(float fov, float aspect, float? near = null, float? far = null)
+        {
+            if (near.HasValue)
+            {
+                this.near = near.Value;
+            }
+            if (far.HasValue)
+            {
+                this.far = far.Value;
+            }
+            projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(fov), aspect, this.near, this.far);
+            Console.WriteLine($"Camera Projection Updated:\n\tFOV: {fov}\n\tASPECT: {aspect}\n\tNEAR/FAR: {this.near}/{this.far}");
+        }
 
         public void Forward(float delta) => position += front * speed * delta;
         public void Backward(float delta) => position -= front * speed * delta;
@@ -76,13 +94,13 @@ namespace ConsoleApp1.Viewing
             this.lastPos = currentPos;
 
             this.yaw += deltaX * this.sensitivity;
-            if (this.pitch > 89.0f)
+            if (this.pitch > CMath.epsilon_90_s)
             {
-                this.pitch = 89.0f;
+                this.pitch = CMath.epsilon_90_s;
             }
-            else if (this.pitch < -89.0f)
+            else if (this.pitch < CMath.epsilon_n90_s)
             {
-                this.pitch = -89.0f;
+                this.pitch = CMath.epsilon_n90_s;
             }
             else
             {
