@@ -14,9 +14,9 @@ namespace ConsoleApp1
 
         Matrix4 ModelMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.0f));
 
-        public readonly Camera camera = new(new(0.0f, 0.0f, 3.0f));
+        public readonly Camera camera = new(new(0.0f, 0.0f, 0.0f));
 
-        Texture? T1 = null;
+        Texture T1;
         ShaderProgram shaderProgram;
 
         World.World world = new();
