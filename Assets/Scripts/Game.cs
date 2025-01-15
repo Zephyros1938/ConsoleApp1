@@ -99,7 +99,7 @@ namespace ConsoleApp1
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
             shader = new("Assets/Shaders/Default/tile.vert", "Assets/Shaders/Default/tile.frag");
-            T1 = new("Assets/Images/textures.png", shader.Handle);
+            T1 = new("Assets/Tests/UV_checker_Map_byValle.png", shader.Handle);
 
             shader.SetMatrix4("model", ModelMatrix);
             shader.SetMatrix4("view", camera.GetViewMatrix());

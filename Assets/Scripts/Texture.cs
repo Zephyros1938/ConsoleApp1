@@ -1,5 +1,4 @@
-using OpenTK.Graphics.ES20;
-using OGL = OpenTK.Graphics.OpenGL;
+using OpenTK.Graphics.ES30;
 using StbImageSharp;
 
 namespace ConsoleApp1.Shaders
@@ -21,7 +20,7 @@ namespace ConsoleApp1.Shaders
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-            GL.TexImage2D(TextureTarget.Texture2D, 0, PixelInternalFormat.Rgba, Tex.Width, Tex.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, Tex.Data);
+            GL.TexImage2D(TextureTarget2d.Texture2D, 0, TextureComponentCount.Rgba, Tex.Width, Tex.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, Tex.Data);
         }
 
         public ImageResult LoadTexture(String path)
