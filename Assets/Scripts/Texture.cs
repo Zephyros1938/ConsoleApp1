@@ -9,28 +9,34 @@ namespace ConsoleApp1.Shaders
         public readonly ImageResult Tex;
         public readonly string Path;
         public readonly int Handle;
+        public readonly TextureUnit unit;
 
-        public Texture(String location, int Handle)
+        public Texture(String location, TextureUnit unit)
         {
-            this.Handle = Handle;
+            Handle = GL.GenTexture();
+            this.unit = unit;
             this.Path = location;
             StbImage.stbi_set_flip_vertically_on_load(1);
             this.Tex = LoadTexture(location);
+            GL.ActiveTexture(unit);
+            GL.BindTexture(TextureTarget.Texture2D, Handle);
+            GL.TexImage2D(TextureTarget2d.Texture2D, 0, TextureComponentCount.Rgba, Tex.Width, Tex.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, Tex.Data);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.ClampToBorder);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.ClampToBorder);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
-            GL.TexImage2D(TextureTarget2d.Texture2D, 0, TextureComponentCount.Rgba, Tex.Width, Tex.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, Tex.Data);
+            GL.GenerateMipmap(TextureTarget.Texture2D);
+            Use();
         }
 
-        public ImageResult LoadTexture(String path)
+        public static ImageResult LoadTexture(String path)
         {
-            return ImageResult.FromStream(File.OpenRead(path), ColorComponents.RedGreenBlueAlpha); ;
+            return ImageResult.FromStream(File.OpenRead(path), ColorComponents.RedGreenBlueAlpha);
         }
 
-        public void Use(TextureUnit unit = TextureUnit.Texture0)
+        public void Use()
         {
-            GL.ActiveTexture(unit);
+            GL.ActiveTexture(this.unit);
             GL.BindTexture(TextureTarget.Texture2D, Handle);
         }
     }

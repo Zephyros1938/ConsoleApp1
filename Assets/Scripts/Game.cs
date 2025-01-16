@@ -5,6 +5,7 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using ConsoleApp1.Shaders;
 using ConsoleApp1.Viewing;
+using ConsoleApp1.World.Tiles;
 
 namespace ConsoleApp1
 {
@@ -15,8 +16,6 @@ namespace ConsoleApp1
         Matrix4 ModelMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.0f));
 
         public readonly Camera camera = new(new(0.0f, 0.0f, 0.0f));
-
-        Texture T1;
         ShaderProgram shaderProgram;
 
         World.World world = new();
@@ -116,11 +115,17 @@ namespace ConsoleApp1
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
             shaderProgram = new("Assets/Shaders/Default/default.vert", "Assets/Shaders/Default/default.frag");
-            T1 = new("Assets/Tests/UV_checker_Map_byValle.png", shaderProgram.GetShaderHandle());
 
             shaderProgram.SetMatrix4("model", ModelMatrix);
             shaderProgram.SetMatrix4("view", camera.GetViewMatrix());
             shaderProgram.SetMatrix4("projection", camera.GetProjectionMatrix());
+            shaderProgram.SetVec3("texInfo", World.Tiles.TileIDs.glass.BlockVec3);
+            shaderProgram.AddTexture(new("Assets/Images/textures.png", TextureUnit.Texture0), 0, "solid");
+            shaderProgram.AddTexture(new("Assets/Images/specular.png", TextureUnit.Texture1), 1, "solidSpecular");
+            shaderProgram.AddTexture(new("Assets/Images/normals.png", TextureUnit.Texture2), 2, "solidNormal");
+            shaderProgram.AddTexture(new("Assets/Images/textures_tr.png", TextureUnit.Texture3), 3, "transparent");
+            shaderProgram.AddTexture(new("Assets/Images/specular_tr.png", TextureUnit.Texture4), 4, "transparentSpecular");
+            shaderProgram.AddTexture(new("Assets/Images/normals_tr.png", TextureUnit.Texture5), 5, "transparentNormal");
 
             shaderProgram.Bind();
 
@@ -136,6 +141,10 @@ namespace ConsoleApp1
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             GL.Enable(EnableCap.DepthTest);
+            GL.Enable(EnableCap.Blend);
+            GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
+            GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.Texture2D);
 
             CursorState = CursorState.Grabbed;
 
@@ -149,15 +158,13 @@ namespace ConsoleApp1
             shaderProgram.SetMatrix4("model", ModelMatrix);
             shaderProgram.SetMatrix4("view", camera.GetViewMatrix());
             shaderProgram.SetMatrix4("projection", camera.GetProjectionMatrix());
+            shaderProgram.SetVec3("texInfo", World.Tiles.TileIDs.glass.BlockVec3);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            T1.Use();
-            shaderProgram.Use();
             shaderProgram.Bind();
+            shaderProgram.Use();
             shaderProgram.Draw();
-
-            // Code goes here
 
             SwapBuffers();
         }

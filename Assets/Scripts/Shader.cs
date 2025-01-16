@@ -88,6 +88,8 @@ namespace ConsoleApp1.Shaders
         public void SetInt(string Name, int Value)
         {
             int location = GL.GetUniformLocation(Handle, Name);
+            GL.UseProgram(Handle);
+            Console.WriteLine($"Set int with name {Name} and value {Value}");
             GL.Uniform1(location, Value);
         }
 
@@ -108,6 +110,12 @@ namespace ConsoleApp1.Shaders
             int location = GL.GetUniformLocation(Handle, Name);
             GL.Uniform2(location, Value);
         }
+
+        public void SetVec3(string Name, Vector3 Value)
+        {
+            int location = GL.GetUniformLocation(Handle, Name);
+            GL.Uniform3(location, Value);
+        }
     }
 
     public class ShaderProgram(string vertexPath, string fragmentPath)
@@ -116,8 +124,7 @@ namespace ConsoleApp1.Shaders
         readonly int VertexArrayObject = GL.GenVertexArray();
         int indicesLength = 0;
 
-        Texture[]? textures;
-
+        readonly List<Texture> textures = [];
         public void SetIndices(uint[] indices)
         {
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, GL.GenBuffer());
@@ -131,6 +138,12 @@ namespace ConsoleApp1.Shaders
             GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(float), data, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(index, size, type, normalized, stride * sizeof(float), offset);
             GL.EnableVertexAttribArray(index);
+        }
+
+        public void AddTexture(Texture texture, int location, string name)
+        {
+            textures.Add(texture);
+            SetInt(name, location);
         }
 
         public void Bind()
@@ -151,6 +164,15 @@ namespace ConsoleApp1.Shaders
         public void Use()
         {
             shader.Use();
+        }
+
+        public void InitTextures()
+        {
+            foreach (Texture texture in textures)
+            {
+                //Console.WriteLine($"Using texture {texture.Handle} with unit {texture.unit}");
+                texture.Use();
+            }
         }
 
         public int GetAttribLocation(string attribName)
@@ -178,6 +200,11 @@ namespace ConsoleApp1.Shaders
         public void SetVec2(string Name, Vector2 Value)
         {
             shader.SetVec2(Name, Value);
+        }
+
+        public void SetVec3(string Name, Vector3 Value)
+        {
+            shader.SetVec3(Name, Value);
         }
 
     }
