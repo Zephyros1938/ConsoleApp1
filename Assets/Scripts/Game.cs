@@ -39,8 +39,7 @@ namespace ConsoleApp1
 
         readonly uint[] indices =
         [
-            0,1,3,
-            1,2,3
+            0,1,3,1,2,3
         ];
 
         protected override void OnMouseMove(MouseMoveEventArgs e)

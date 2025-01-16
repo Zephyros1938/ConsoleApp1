@@ -1,9 +1,0 @@
-NAME tile
-VERT Assets/Shaders/Default/tile.vert
-FRAG Assets/Shaders/Default/tile.frag
-TEX Assets/Images/textures.png
-TTR Assets/Images/textures_tr.png
-SPC Assets/Images/specular.png
-STR Assets/Images/specular_tr.png
-NRM Assets/Images/normals.png
-NTR Assets/Images/normals_tr.png

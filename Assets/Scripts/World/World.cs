@@ -1,4 +1,3 @@
-using System.Data.Common;
 using OpenTK.Mathematics;
 
 namespace ConsoleApp1.World
@@ -52,37 +51,5 @@ namespace ConsoleApp1.World
                 Console.WriteLine($"{point + p}");
             }
         }
-    }
-
-    public readonly struct Chunk(Vector3 center)
-    {
-        public readonly (uint, Vector3) BlockData { get; }
-        public readonly Vector3 Center { get; } = center;
-
-        public void Generate()
-        {
-
-        }
-    }
-
-    public readonly struct TileIDs
-    {
-        public readonly Block grassTop = new(0, new(0, 0));
-
-        public TileIDs()
-        {
-        }
-    }
-
-    public readonly struct Block(uint ID, TexCoord TexCoordStart)
-    {
-        public uint ID { get; } = ID;
-        public TexCoord TexCoordStart { get; } = TexCoordStart;
-    }
-
-    public readonly struct TexCoord(int x, int y)
-    {
-        public int X { get; } = x;
-        public int Y { get; } = y;
     }
 }

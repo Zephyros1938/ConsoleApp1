@@ -12,13 +12,8 @@ namespace ConsoleApp1
         /// <param name="args"></param>
         public static void Main(string[] args)
         {
-            using (var game = new Game(Resolutions.Medium_1280x720.X, Resolutions.Medium_1280x720.Y, "Hello World!", GameWindowSettings.Default))
+            using (var game = new Game(Resolutions.FullHD_1920x1080.X, Resolutions.FullHD_1920x1080.Y, "Hello World!", GameWindowSettings.Default))
             {
-
-                // Get the monitor resolution and set the window size to the best resolution
-                var res = new Vector2i(game.CurrentMonitor.HorizontalResolution, game.CurrentMonitor.VerticalResolution);
-                Console.WriteLine($"Monitor Resolution: {res.X}x{res.Y}");
-
                 // Center the window on the screen
                 game.CenterWindow();
 
