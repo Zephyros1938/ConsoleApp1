@@ -9,3 +9,5 @@ A general list of potential assets for the game engine
 - https://www.youtube.com/watch?v=MtPrv5tKZgk
 
 ### Extern
+
+- Sonopedia 2
