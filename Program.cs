@@ -12,8 +12,9 @@ namespace ConsoleApp1
         /// <param name="args"></param>
         public static void Main(string[] args)
         {
-            using (var game = new Game(Resolutions.FullHD_1920x1080.X, Resolutions.FullHD_1920x1080.Y, "Hello World!", GameWindowSettings.Default))
+            using (var game = new Game(Resolutions.Medium_1280x720.X, Resolutions.Medium_1280x720.Y, "Hello World!", GameWindowSettings.Default))
             {
+                game.WindowBorder = WindowBorder.Fixed;
                 // Center the window on the screen
                 game.CenterWindow();
 

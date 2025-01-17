@@ -22,14 +22,22 @@ namespace ConsoleApp1
 
         readonly float[] vertices =
         [
-            0.5f, 0.5f, 0.5f,
-            0.5f, -0.5f, 0.5f,
-            -0.5f, -0.5f, 0.5f,
-            -0.5f, 0.5f, 0.5f,
+            0.5f, 0.5f, 0.5f, //+++
+            0.5f, -.5f, 0.5f, //+-+
+            -.5f, -.5f, 0.5f, //--+
+            -.5f, 0.5f, 0.5f, //-++
+            0.5f, 0.5f, -.5f, //++-
+            0.5f, -.5f, -.5f, //+--
+            -.5f, -.5f, -.5f, //---
+            -.5f, 0.5f, -.5f, //-+-
         ];
 
         readonly float[] texCoords =
         [
+            1f,1f,
+            1f,0f,
+            0f,0f,
+            0f,1f,
             1f,1f,
             1f,0f,
             0f,0f,
@@ -38,11 +46,13 @@ namespace ConsoleApp1
 
         readonly uint[] indices =
         [
-            0,1,3,1,2,3
+            0,1,3,1,2,3,
+            4,5,7,5,6,7
         ];
 
         readonly float[] blockData =
         [
+            TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, 
             TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, 
         ];
 
@@ -166,7 +176,7 @@ namespace ConsoleApp1
             shaderProgram.SetMatrix4("view", camera.GetViewMatrix());
             shaderProgram.SetMatrix4("projection", camera.GetProjectionMatrix());
 
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit );
 
             shaderProgram.Bind();
             shaderProgram.Use();

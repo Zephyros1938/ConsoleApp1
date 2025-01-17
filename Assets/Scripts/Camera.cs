@@ -12,6 +12,7 @@ namespace ConsoleApp1.Viewing
         public float yaw;
         float near = 0.01f;
         float far = 100.0f;
+        float FOV = 45.0f;
 
         Vector3 cameraTarget = Vector3.Zero;
 
@@ -22,7 +23,7 @@ namespace ConsoleApp1.Viewing
         Vector2 lastPos = new(0.0f, 0.0f);
 
         Matrix4 view;
-        Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), 100 / 100, .01f, 100f);
+        Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45f), 100 / 100, .01f, 100f);
 
         public Camera(Vector3? position = null, Matrix4? projection = null)
         {
@@ -112,5 +113,12 @@ namespace ConsoleApp1.Viewing
         public Matrix4 GetProjectionMatrix() => projection;
         public Vector3 GetPosition() => position;
         public Vector3 GetFront() => front;
+
+        public bool IsBlockInFOV(Vector3 point)
+        {
+            Vector3 dir = (point - position).Normalized();
+            float angle = (float)Math.Acos(Vector3.Dot(front, dir));
+            return angle < ((FOV+5f)/2f);
+        }
     }
 }

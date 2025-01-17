@@ -59,12 +59,18 @@ namespace ConsoleApp1.World
         }
     }
 
-    public readonly struct Block(float X, float Y, float Z)
+    public readonly struct BlockFace(float X, float Y, float Z)
     {
         // public int ID { get; } = ID;
         // public TexCoord TexCoordStart { get; } = TexCoordStart;
 
-        public Vector3 BlockVec3 { get; } = new(X,Y,Z);
+        public Vector3 BlockVec3 { get; } = new(X, Y, Z);
         public float ID { get; } = X;
+    }
+
+    public readonly struct Block(float X, float Y, float Z, uint ID)
+    {
+        public Vector3 Position { get; } = new(X, Y, Z);
+        public uint ID { get; } = ID;
     }
 }

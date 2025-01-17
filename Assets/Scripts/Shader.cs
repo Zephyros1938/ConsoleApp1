@@ -175,10 +175,7 @@ namespace ConsoleApp1.Shaders
             GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(float), data, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(index, size, type, normalized, stride * sizeof(float), offset);
             GL.EnableVertexAttribArray(index);
-            if (action != null)
-            {
-                action();
-            }
+            action?.Invoke();
         }
 
         public void SetArrayBufferI(int index, int size, VertexAttribPointerType type, bool normalized, int stride, int offset, int[] data, string name = "UNNAMED")
@@ -227,7 +224,7 @@ namespace ConsoleApp1.Shaders
             shader.Use();
         }
 
-        [Obsolete]
+        [Obsolete("InitTextures() causes problems in tile shaders, it will not be supported.", true)]
         public void InitTextures()
         {
             foreach (Texture texture in textures)
@@ -270,20 +267,20 @@ namespace ConsoleApp1.Shaders
 
         public void Dispose()
         {
-            Console.WriteLine("Disposing ShaderProgram");
-            Console.WriteLine($"Deleting VAO {VertexArrayObject}");
+            Console.WriteLine("Disposing ShaderProgram...");
+            Console.WriteLine($"\tDeleting VAO {VertexArrayObject}...");
             GL.DeleteVertexArray(VertexArrayObject);
             foreach ((String name, int ID) in buffers)
             {
-                Console.WriteLine($"Deleting Buffer {ID} with name {name}");
+                Console.WriteLine($"\t\tDeleting Buffer {ID} with name {name}...");
                 GL.DeleteBuffer(ID);
             }
             foreach (Texture texture in textures)
             {
-                Console.WriteLine($"Deleting Texture {texture.Handle} with path {texture.Path}");
+                Console.WriteLine($"\t\tDeleting Texture {texture.Handle} with path {texture.Path}...");
                 GL.DeleteTexture(texture.Handle);
             }
-            Console.WriteLine($"Deleting Shader {shader.Handle}");
+            Console.WriteLine($"\tDeleting Shader {shader.Handle}...");
             shader.Dispose();
             Console.WriteLine("Disposed ShaderProgram");
         }
