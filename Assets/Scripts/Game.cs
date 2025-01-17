@@ -41,6 +41,11 @@ namespace ConsoleApp1
             0,1,3,1,2,3
         ];
 
+        readonly float[] blockData =
+        [
+            TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, 
+        ];
+
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
             base.OnMouseMove(e);
@@ -119,7 +124,6 @@ namespace ConsoleApp1
             shaderProgram.SetMatrix4("model", ModelMatrix);
             shaderProgram.SetMatrix4("view", camera.GetViewMatrix());
             shaderProgram.SetMatrix4("projection", camera.GetProjectionMatrix());
-            shaderProgram.SetVec3("texInfo", World.Tiles.TileIDs.glass.BlockVec3);
             shaderProgram.AddTexture(new("Assets/Images/textures.png", TextureUnit.Texture0), 0, "solid");
             shaderProgram.AddTexture(new("Assets/Images/specular.png", TextureUnit.Texture1), 1, "solidSpecular");
             shaderProgram.AddTexture(new("Assets/Images/normals.png", TextureUnit.Texture2), 2, "solidNormal");
@@ -130,13 +134,16 @@ namespace ConsoleApp1
             shaderProgram.Bind();
 
             // Indices
-            shaderProgram.SetIndices(indices);
+            shaderProgram.SetIndices(indices, "indices");
 
             // Vertices
-            ShaderProgram.SetArrayBuffer(0, 3, VertexAttribPointerType.Float, false, 3, 0, vertices);
+            shaderProgram.SetArrayBufferF(0, 3, VertexAttribPointerType.Float, false, 3, 0, vertices, "vertices");
 
             // Colors
-            ShaderProgram.SetArrayBuffer(1, 2, VertexAttribPointerType.Float, false, 2, 0, texCoords);
+            shaderProgram.SetArrayBufferF(1, 2, VertexAttribPointerType.Float, false, 2, 0, texCoords, "texCoords");
+
+            // Block Data
+            shaderProgram.SetArrayBufferF(2, 1, VertexAttribPointerType.Float, false, 1, 0, blockData, "blockData");
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
@@ -158,7 +165,6 @@ namespace ConsoleApp1
             shaderProgram.SetMatrix4("model", ModelMatrix);
             shaderProgram.SetMatrix4("view", camera.GetViewMatrix());
             shaderProgram.SetMatrix4("projection", camera.GetProjectionMatrix());
-            shaderProgram.SetVec3("texInfo", World.Tiles.TileIDs.glass.BlockVec3);
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
@@ -184,7 +190,7 @@ namespace ConsoleApp1
         {
             base.OnUnload();
 
-            shaderProgram.shader.Dispose();
+            shaderProgram.Dispose();
 
             // Code goes here
         }

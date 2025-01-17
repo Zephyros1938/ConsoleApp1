@@ -4,8 +4,8 @@ namespace ConsoleApp1.World
 {
     public class World
     {
-        (float, float, float) renderDistance = (2f, 2f, 2f);
-        (float, float, float) chunkSize = (10f, 10f, 10f);
+        Vector3 renderDistance = (2f, 2f, 2f);
+        Vector3 chunkSize = (10f, 10f, 10f);
         (int, Vector3) chunkList;
         float cubeSize = 0.5f;
 
@@ -21,7 +21,7 @@ namespace ConsoleApp1.World
             new(-1,1,-1),
         };
 
-        public World((float, float, float)? renderDistance = null, (float, float, float)? chunkSize = null, float? cubeSize = null)
+        public World(Vector3? renderDistance = null, Vector3? chunkSize = null, float? cubeSize = null)
         {
             if (renderDistance.HasValue)
             {
@@ -45,11 +45,26 @@ namespace ConsoleApp1.World
         public void Generate()
         {
             Console.WriteLine("Generating..");
-            Vector3 point = new(0f, 0f, 0f);
-            foreach (Vector3 p in pointOffsets)
-            {
-                Console.WriteLine($"{point + p}");
-            }
         }
+    }
+
+    public readonly struct Chunk(Vector3 center)
+    {
+        public readonly (uint, Vector3) BlockData { get; }
+        public readonly Vector3 Center { get; } = center;
+
+        public void Generate()
+        {
+
+        }
+    }
+
+    public readonly struct Block(float X, float Y, float Z)
+    {
+        // public int ID { get; } = ID;
+        // public TexCoord TexCoordStart { get; } = TexCoordStart;
+
+        public Vector3 BlockVec3 { get; } = new(X,Y,Z);
+        public float ID { get; } = X;
     }
 }

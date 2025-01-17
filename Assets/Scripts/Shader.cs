@@ -89,31 +89,35 @@ namespace ConsoleApp1.Shaders
         {
             int location = GL.GetUniformLocation(Handle, Name);
             GL.UseProgram(Handle);
-            Console.WriteLine($"Set int with name {Name} and value {Value}");
+            //Console.WriteLine($"Set int with name {Name} and value {Value}");
             GL.Uniform1(location, Value);
         }
 
         public void SetFloat(string Name, float Value)
         {
             int location = GL.GetUniformLocation(Handle, Name);
+            //Console.WriteLine($"Set float with name {Name} and value {Value}");
             GL.Uniform1(location, Value);
         }
 
         public void SetMatrix4(string Name, Matrix4 Value)
         {
             int location = GL.GetUniformLocation(Handle, Name);
+            //Console.WriteLine($"Set matrix with name {Name} and value {Value}");
             GL.UniformMatrix4(location, true, ref Value);
         }
 
         public void SetVec2(string Name, Vector2 Value)
         {
             int location = GL.GetUniformLocation(Handle, Name);
+            //Console.WriteLine($"Set vec2 with name {Name} and value {Value}");
             GL.Uniform2(location, Value);
         }
 
         public void SetVec3(string Name, Vector3 Value)
         {
             int location = GL.GetUniformLocation(Handle, Name);
+            //Console.WriteLine($"Set vec3 with name {Name} and value {Value}");
             GL.Uniform3(location, Value);
         }
     }
@@ -124,19 +128,44 @@ namespace ConsoleApp1.Shaders
         readonly int VertexArrayObject = GL.GenVertexArray();
         int indicesLength = 0;
 
+        readonly List<(String name, int ID)> buffers = [];
         readonly List<Texture> textures = [];
-        public void SetIndices(uint[] indices)
+        public void SetIndices(uint[] indices, string name = "UNNAMED")
         {
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, GL.GenBuffer());
+            int ID = GL.GenBuffer();
+            buffers.Add((name, ID));
+            GL.BindBuffer(BufferTarget.ElementArrayBuffer, ID);
             GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
             indicesLength = indices.Length;
         }
 
-        public static void SetArrayBuffer(int index, int size, VertexAttribPointerType type, bool normalized, int stride, int offset, float[] data)
+        public void SetArrayBufferF(int index, int size, VertexAttribPointerType type, bool normalized, int stride, int offset, float[] data, string name = "UNNAMED")
         {
-            GL.BindBuffer(BufferTarget.ArrayBuffer, GL.GenBuffer());
+            int ID = GL.GenBuffer();
+            buffers.Add((name, ID));
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
             GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(float), data, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(index, size, type, normalized, stride * sizeof(float), offset);
+            GL.EnableVertexAttribArray(index);
+        }
+
+        public void SetArrayBufferI(int index, int size, VertexAttribPointerType type, bool normalized, int stride, int offset, int[] data, string name = "UNNAMED")
+        {
+            int ID = GL.GenBuffer();
+            buffers.Add((name, ID));
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
+            GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(int), data, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(index, size, type, normalized, stride * sizeof(int), offset);
+            GL.EnableVertexAttribArray(index);
+        }
+
+        public void SetArrayBufferUI(int index, int size, VertexAttribPointerType type, bool normalized, int stride, int offset, uint[] data, string name = "UNNAMED")
+        {
+            int ID = GL.GenBuffer();
+            buffers.Add((name, ID));
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
+            GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(uint), data, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(index, size, type, normalized, stride * sizeof(uint), offset);
             GL.EnableVertexAttribArray(index);
         }
 
@@ -205,6 +234,26 @@ namespace ConsoleApp1.Shaders
         public void SetVec3(string Name, Vector3 Value)
         {
             shader.SetVec3(Name, Value);
+        }
+
+        public void Dispose()
+        {
+            Console.WriteLine("Disposing ShaderProgram");
+            Console.WriteLine($"Deleting VAO {VertexArrayObject}");
+            GL.DeleteVertexArray(VertexArrayObject);
+            foreach ((String name, int ID) in buffers)
+            {
+                Console.WriteLine($"Deleting Buffer {ID} with name {name}");
+                GL.DeleteBuffer(ID);
+            }
+            foreach (Texture texture in textures)
+            {
+                Console.WriteLine($"Deleting Texture {texture.Handle} with path {texture.Path}");
+                GL.DeleteTexture(texture.Handle);
+            }
+            Console.WriteLine($"Deleting Shader {shader.Handle}");
+            shader.Dispose();
+            Console.WriteLine("Disposed ShaderProgram");
         }
 
     }
