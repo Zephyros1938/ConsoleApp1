@@ -139,7 +139,35 @@ namespace ConsoleApp1.Shaders
             indicesLength = indices.Length;
         }
 
-        public void SetArrayBufferF(int index, int size, VertexAttribPointerType type, bool normalized, int stride, int offset, float[] data, string name = "UNNAMED")
+        /// <summary>
+        /// Sets up a vertex array buffer for floating-point data, configuring the vertex attribute pointer and enabling the attribute.
+        /// </summary>
+        /// <param name="index">The index of the vertex attribute.</param>
+        /// <param name="size">The number of components per vertex attribute (e.g., 3 for vec3).</param>
+        /// <param name="type">The data type of each component (e.g., GL_FLOAT).</param>
+        /// <param name="normalized">Specifies whether fixed-point data should be normalized.</param>
+        /// <param name="stride">The byte offset between consecutive vertex attributes.</param>
+        /// <param name="offset">The offset of the first component in the buffer.</param>
+        /// <param name="data">The array of floating-point data to upload to the buffer.</param>
+        /// <param name="name">An optional name to identify the buffer.</param>
+        /// <param name="action">An optional action to execute after setting up the buffer.</param>
+        /// <example>
+        /// This example demonstrates how to set up a vertex array buffer for position data with three components per vertex.
+        /// <code>
+        /// SetArrayBufferF(
+        ///     index: 0,
+        ///     size: 3,
+        ///     type: VertexAttribPointerType.Float,
+        ///     normalized: false,
+        ///     stride: 3,
+        ///     offset: 0,
+        ///     data: new float[] { 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f },
+        ///     name: "PositionBuffer",
+        ///     action: () => Console.WriteLine("Buffer setup complete.")
+        /// );
+        /// </code>
+        /// </example>
+        public void SetArrayBufferF(int index, int size, VertexAttribPointerType type, bool normalized, int stride, int offset, float[] data, string name = "UNNAMED", Action? action = null)
         {
             int ID = GL.GenBuffer();
             buffers.Add((name, ID));
@@ -147,6 +175,10 @@ namespace ConsoleApp1.Shaders
             GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(float), data, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(index, size, type, normalized, stride * sizeof(float), offset);
             GL.EnableVertexAttribArray(index);
+            if (action != null)
+            {
+                action();
+            }
         }
 
         public void SetArrayBufferI(int index, int size, VertexAttribPointerType type, bool normalized, int stride, int offset, int[] data, string name = "UNNAMED")
@@ -195,11 +227,11 @@ namespace ConsoleApp1.Shaders
             shader.Use();
         }
 
+        [Obsolete]
         public void InitTextures()
         {
             foreach (Texture texture in textures)
             {
-                //Console.WriteLine($"Using texture {texture.Handle} with unit {texture.unit}");
                 texture.Use();
             }
         }
