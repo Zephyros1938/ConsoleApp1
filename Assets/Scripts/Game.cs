@@ -6,6 +6,7 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using ConsoleApp1.Shaders;
 using ConsoleApp1.Viewing;
 using ConsoleApp1.World.Tiles;
+using ConsoleApp1.World;
 
 namespace ConsoleApp1
 {
@@ -46,7 +47,7 @@ namespace ConsoleApp1
 
         readonly uint[] indices =
         [
-            0,1,3,1,2,3,
+            3,2,1,3,1,0,
             4,5,7,5,6,7
         ];
 
@@ -143,24 +144,64 @@ namespace ConsoleApp1
 
             shaderProgram.Bind();
 
+            float[] _vertices = 
+            [
+                //front face
+                1f,1f,1f,
+                1f,-1f,1f,
+                -1f,1f,1f,
+                1f,-1f,1f,
+                -1f,-1f,1f,
+                -1f,1f,1f
+            ];
+
+            float[] _texCoords = 
+            [
+                //front face
+                1f,1f,
+                1f,0f,
+                0f,1f,
+                1f,0f,
+                0f,0f,
+                0f,1f
+            ];
+
+            BlockFace[] _blockdata = 
+            [
+                TileIDs.grassTop
+            ];
+
+            float[] _blockdataunpacked = new float[_blockdata.Length * 6];
+
+            for (int i = 0; i < _blockdata.Length; i++)
+            {
+                _blockdataunpacked[i*3] = _blockdata[i].BlockVec3.X;
+                _blockdataunpacked[(i*3)+1] = _blockdata[i].BlockVec3.Y;
+                _blockdataunpacked[(i*3)+2] = _blockdata[i].BlockVec3.Z;
+                _blockdataunpacked[(i*3)+3] = _blockdata[i].BlockVec3.X;
+                _blockdataunpacked[(i*3)+4] = _blockdata[i].BlockVec3.Y;
+                _blockdataunpacked[(i*3)+5] = _blockdata[i].BlockVec3.Z;
+            }
+
             // Indices
-            shaderProgram.SetIndices(indices, "indices");
+            //shaderProgram.SetArrays(indices, "indices");
 
             // Vertices
-            shaderProgram.SetArrayBufferF(0, 3, VertexAttribPointerType.Float, false, 3, 0, vertices, "vertices");
+            // shaderProgram.SetArrayBufferF(0, 3, VertexAttribPointerType.Float, false, 3, 0, vertices, "vertices");
+            shaderProgram.SetArrays(_vertices, "vertices");
 
             // Colors
-            shaderProgram.SetArrayBufferF(1, 2, VertexAttribPointerType.Float, false, 2, 0, texCoords, "texCoords");
+            shaderProgram.SetArrayBufferF(1, 2, VertexAttribPointerType.Float, false, 2, 0, _texCoords, "texCoords");
 
             // Block Data
-            shaderProgram.SetArrayBufferF(2, 1, VertexAttribPointerType.Float, false, 1, 0, blockData, "blockData");
+            shaderProgram.SetArrayBufferF(2, 1, VertexAttribPointerType.Float, false, 1, 0, _blockdataunpacked, "blockData");
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-            GL.Enable(EnableCap.CullFace);
+            //GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Texture2D);
 
             CursorState = CursorState.Grabbed;
@@ -180,7 +221,7 @@ namespace ConsoleApp1
 
             shaderProgram.Bind();
             shaderProgram.Use();
-            shaderProgram.Draw();
+            shaderProgram.DrawArrays();
 
             SwapBuffers();
         }

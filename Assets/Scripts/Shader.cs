@@ -126,17 +126,23 @@ namespace ConsoleApp1.Shaders
     {
         public readonly Shader shader = new(vertexPath, fragmentPath);
         readonly int VertexArrayObject = GL.GenVertexArray();
-        int indicesLength = 0;
+        int elementsLength = 0;
+        int arraysLength = 0;
 
         readonly List<(String name, int ID)> buffers = [];
         readonly List<Texture> textures = [];
-        public void SetIndices(uint[] indices, string name = "UNNAMED")
+        public void SetElements(uint[] elements, string name = "UNNAMED")
         {
             int ID = GL.GenBuffer();
             buffers.Add((name, ID));
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ID);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
-            indicesLength = indices.Length;
+            GL.BufferData(BufferTarget.ElementArrayBuffer, elements.Length * sizeof(uint), elements, BufferUsageHint.StaticDraw);
+            elementsLength = elements.Length;
+        }
+        public void SetArrays(float[] arrays, string name = "UNNAMED")
+        {
+            SetArrayBufferF(0, 3, VertexAttribPointerType.Float, false, 3, 0, arrays, name);
+            arraysLength = arrays.Length;
         }
 
         /// <summary>
@@ -214,9 +220,14 @@ namespace ConsoleApp1.Shaders
             GL.BindVertexArray(0);
         }
 
-        public void Draw()
+        public void DrawElements()
         {
-            GL.DrawElements(PrimitiveType.Triangles, indicesLength, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Triangles, elementsLength, DrawElementsType.UnsignedInt, 0);
+        }
+
+        public void DrawArrays()
+        {
+            GL.DrawArrays(PrimitiveType.Triangles, 0, arraysLength);
         }
 
         public void Use()
