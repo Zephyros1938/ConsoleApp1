@@ -45,7 +45,7 @@ const vec2 tileCoords[80] = vec2[](
 
 // Function to get the bottom-left corner of a tile by ID
 vec2 getTileCoords(float ID) {
-    return tileCoords[int(mod(floor(ID+.5),80.0))];
+    return tileCoords[int(ID)];
 }
 
 // Calculates the texture coordinates for tile on the tilemap
@@ -58,16 +58,7 @@ vec2 getTile(float ID)
 
 void main()
 {
-    vec2 targetTile = getTile(tileID);
-    if(tileID >= textureTransparentID)
-    {
-        FragColor = texture(transparent, targetTile);
-        //FragColor = vec4(1./tileID, 0.0, 0.0, 1.0);
-    }
-    else
-    {
-        FragColor = vec4(texture(solid, targetTile).xyz, 1.);
-        //FragColor = vec4(0.0,1./tileID, 0.0, 1.0);
-    }
-    
+    float x = mod(tileID, 10.0);
+    float y = ceil(tileID / 10.0);
+    FragColor = texture(solid, (texCoord + vec2(x,y)) * vec2(0.125,0.1));
 }

@@ -141,7 +141,12 @@ namespace ConsoleApp1.Shaders
         }
         public void SetArrays(float[] arrays, string name = "UNNAMED")
         {
-            SetArrayBufferF(0, 3, VertexAttribPointerType.Float, false, 3, 0, arrays, name);
+            int ID = GL.GenBuffer();
+            buffers.Add((name, ID));
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
+            GL.BufferData(BufferTarget.ArrayBuffer, arrays.Length * sizeof(float), arrays, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(0);
             arraysLength = arrays.Length;
         }
 

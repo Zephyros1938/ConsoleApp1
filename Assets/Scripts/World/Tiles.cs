@@ -220,4 +220,16 @@ namespace ConsoleApp1.World.Tiles
         {
         }
     }
+    public readonly struct BlockFaceDirections
+    {
+        public static readonly float[] Forward = 
+        [
+            1f,1f,1f,
+            1f,-1f,1f,
+            -1f,1f,1f,
+            1f,-1f,1f,
+            -1f,-1f,1f,
+            -1f,1f,1f
+        ];
+    }
 }

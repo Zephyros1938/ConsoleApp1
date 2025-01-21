@@ -53,8 +53,8 @@ namespace ConsoleApp1
 
         readonly float[] blockData =
         [
-            TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, 
-            TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, 
+            TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID,
+            TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID, TileIDs.leavesAcaciaBirdnest.ID,
         ];
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
@@ -144,57 +144,49 @@ namespace ConsoleApp1
 
             shaderProgram.Bind();
 
-            float[] _vertices = 
+            float[] _verticesUnpacked =
             [
                 //front face
                 1f,1f,1f,
-                1f,-1f,1f,
                 -1f,1f,1f,
-                1f,-1f,1f,
-                -1f,-1f,1f,
-                -1f,1f,1f
+                1f,-1f,1f
             ];
 
-            float[] _texCoords = 
+            float[] _texCoords =
             [
                 //front face
                 1f,1f,
                 1f,0f,
-                0f,1f,
-                1f,0f,
-                0f,0f,
                 0f,1f
             ];
 
-            BlockFace[] _blockdata = 
+            float[] _blockdata =
             [
-                TileIDs.grassTop
+                9f,9f,9f
             ];
-
-            float[] _blockdataunpacked = new float[_blockdata.Length * 6];
-
-            for (int i = 0; i < _blockdata.Length; i++)
-            {
-                _blockdataunpacked[i*3] = _blockdata[i].BlockVec3.X;
-                _blockdataunpacked[(i*3)+1] = _blockdata[i].BlockVec3.Y;
-                _blockdataunpacked[(i*3)+2] = _blockdata[i].BlockVec3.Z;
-                _blockdataunpacked[(i*3)+3] = _blockdata[i].BlockVec3.X;
-                _blockdataunpacked[(i*3)+4] = _blockdata[i].BlockVec3.Y;
-                _blockdataunpacked[(i*3)+5] = _blockdata[i].BlockVec3.Z;
-            }
 
             // Indices
             //shaderProgram.SetArrays(indices, "indices");
 
             // Vertices
             // shaderProgram.SetArrayBufferF(0, 3, VertexAttribPointerType.Float, false, 3, 0, vertices, "vertices");
-            shaderProgram.SetArrays(_vertices, "vertices");
+            shaderProgram.SetArrays(_verticesUnpacked, "vertices");
 
             // Colors
             shaderProgram.SetArrayBufferF(1, 2, VertexAttribPointerType.Float, false, 2, 0, _texCoords, "texCoords");
 
             // Block Data
-            shaderProgram.SetArrayBufferF(2, 1, VertexAttribPointerType.Float, false, 1, 0, _blockdataunpacked, "blockData");
+            shaderProgram.SetArrayBufferF(2, 1, VertexAttribPointerType.Float, false, 1, 0, _blockdata, "blockData");
+
+            Vector2[] _texCoordIncrements = [(1f, 1f), (1f, 0f), (0f, 0f), (0f, 1f)];
+
+            foreach (float ID in _blockdata)
+            {
+                foreach (Vector2 v in _texCoordIncrements)
+                {
+                    Console.WriteLine($"x:{(ID % 10f) + v.X} y:{Math.Ceiling(ID / 10f) + v.Y}");
+                }
+            }
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
@@ -217,7 +209,7 @@ namespace ConsoleApp1
             shaderProgram.SetMatrix4("view", camera.GetViewMatrix());
             shaderProgram.SetMatrix4("projection", camera.GetProjectionMatrix());
 
-            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit );
+            GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             shaderProgram.Bind();
             shaderProgram.Use();
