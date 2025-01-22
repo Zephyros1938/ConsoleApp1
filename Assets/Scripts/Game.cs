@@ -17,6 +17,8 @@ namespace ConsoleApp1
         Matrix4 ModelMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.0f));
 
         public readonly Camera camera = new(new(0.0f, 0.0f, 0.0f));
+
+        bool cameraControl = true;
         ShaderProgram shaderProgram;
 
         private Thread _WorldThread;
@@ -54,12 +56,12 @@ namespace ConsoleApp1
             -1f,-1f,-1f,
             -1f,-1f, 1f,
             //right face
-              1f, 1f,1f,
-             -1f, 1f,1f,
-              1f,-1f,1f,
-             -1f, 1f,1f,
-             -1f,-1f,1f,
-              1f,-1f,1f,
+             1f, 1f, 1f,
+            -1f, 1f, 1f,
+             1f,-1f, 1f,
+            -1f, 1f, 1f,
+            -1f,-1f, 1f,
+             1f,-1f, 1f,
              //left face
              1f, 1f,-1f,
              1f,-1f,-1f,
@@ -73,11 +75,11 @@ namespace ConsoleApp1
         [
             //top face
             1f,1f,
-            0f,1f,
             1f,0f,
             0f,1f,
+            1f,0f,
             0f,0f,
-            1f,0f,
+            0f,1f,
             //bottom face
             1f,1f,
             0f,1f,
@@ -128,18 +130,20 @@ namespace ConsoleApp1
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
             base.OnMouseMove(e);
-            if (firstMove)
+            if (cameraControl)
             {
-                camera.UpdateLastPos(new(e.X, e.Y));
-                firstMove = false;
+                if (firstMove)
+                {
+                    camera.UpdateLastPos(new(e.X, e.Y));
+                    firstMove = false;
+                }
+                else
+                {
+                    Vector2 currentPos = new(e.X, e.Y);
+                    camera.UpdateRotation(currentPos);
+                }
+                camera.Rotate();
             }
-            else
-            {
-                Vector2 currentPos = new(e.X, e.Y);
-                camera.UpdateRotation(currentPos);
-            }
-            camera.Rotate();
-
         }
 
         protected override void OnUpdateFrame(FrameEventArgs e) // Update game logic here
@@ -188,14 +192,25 @@ namespace ConsoleApp1
                 camera.Down((float)e.Time);
             }
 
-            if (input.IsKeyDown(Keys.O))
+            if (input.IsKeyDown(Keys.Q))
             {
                 shaderProgram.SetDrawMode(PrimitiveType.Lines);
             }
 
-            if (input.IsKeyDown(Keys.P))
+            if (input.IsKeyDown(Keys.E))
             {
                 shaderProgram.SetDrawMode(PrimitiveType.Triangles);
+            }
+
+            if(input.IsKeyPressed(Keys.T))
+            {
+                cameraControl = !cameraControl;
+                CursorState = cameraControl == true ? CursorState = CursorState.Grabbed : CursorState = CursorState.Normal;
+            }
+
+            if(input.IsKeyPressed(Keys.R))
+            {
+                shaderProgram.ToggleDebug();
             }
         }
 

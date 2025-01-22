@@ -8,6 +8,7 @@ namespace ConsoleApp1.Shaders
 
         public readonly int Handle;
         private bool disposedValue;
+        public bool debugShader = false;
 
         public Shader(string vertexPath, string fragmentPath, string? geometryPath = null)
         {
@@ -76,6 +77,8 @@ namespace ConsoleApp1.Shaders
                 GL.DetachShader(Handle, GeometryShader);
                 GL.DeleteShader(GeometryShader);
             }
+
+            SetBool("debug", false);
         }
 
 
@@ -117,6 +120,14 @@ namespace ConsoleApp1.Shaders
             GL.UseProgram(Handle);
             //Console.WriteLine($"Set int with name {Name} and value {Value}");
             GL.Uniform1(location, Value);
+        }
+
+        public void SetBool(string Name, bool Value)
+        {
+            int location = GL.GetUniformLocation(Handle, Name);
+            GL.UseProgram(Handle);
+            //Console.WriteLine($"Set int with name {Name} and value {Value}");
+            GL.Uniform1(location, Value==true?1:0);
         }
 
         public void SetFloat(string Name, float Value)
@@ -289,6 +300,11 @@ namespace ConsoleApp1.Shaders
             shader.SetInt(Name, Value);
         }
 
+        public void SetBool(string Name, bool Value)
+        {
+            shader.SetBool(Name, Value);
+        }
+
         public void SetFloat(string Name, float Value)
         {
             shader.SetFloat(Name, Value);
@@ -332,6 +348,12 @@ namespace ConsoleApp1.Shaders
         public void SetDrawMode(PrimitiveType drawMode)
         {
             this.drawMode = drawMode;
+        }
+
+        public void ToggleDebug()
+        {
+            shader.debugShader = !shader.debugShader;
+            SetBool("debug", shader.debugShader);
         }
 
     }
