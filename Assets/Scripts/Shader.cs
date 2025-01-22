@@ -154,6 +154,8 @@ namespace ConsoleApp1.Shaders
         readonly int VertexArrayObject = GL.GenVertexArray();
         int elementsLength = 0;
         int arraysLength = 0;
+        
+        PrimitiveType drawMode = PrimitiveType.Triangles;
 
         readonly List<(String name, int ID)> buffers = [];
         readonly List<Texture> textures = [];
@@ -253,12 +255,12 @@ namespace ConsoleApp1.Shaders
 
         public void DrawElements()
         {
-            GL.DrawElements(PrimitiveType.Triangles, elementsLength, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(drawMode, elementsLength, DrawElementsType.UnsignedInt, 0);
         }
 
         public void DrawArrays()
         {
-            GL.DrawArrays(PrimitiveType.Triangles, 0, arraysLength);
+            GL.DrawArrays(drawMode, 0, arraysLength);
         }
 
         public void Use()
@@ -325,6 +327,11 @@ namespace ConsoleApp1.Shaders
             Console.WriteLine($"\tDeleting Shader {shader.Handle}...");
             shader.Dispose();
             Console.WriteLine("Disposed ShaderProgram");
+        }
+
+        public void SetDrawMode(PrimitiveType drawMode)
+        {
+            this.drawMode = drawMode;
         }
 
     }

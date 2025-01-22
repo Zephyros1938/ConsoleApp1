@@ -25,29 +25,104 @@ namespace ConsoleApp1
 
         float[] vertices =
         [
+            //top face
+             1f, 1f, 1f,
+             1f, 1f,-1f,
+            -1f, 1f, 1f,
+             1f, 1f,-1f,
+            -1f, 1f,-1f,
+            -1f, 1f, 1f,
+             //bottom face
+             1f,-1f, 1f,
+            -1f,-1f, 1f,
+             1f,-1f,-1f,
+            -1f,-1f, 1f,
+            -1f,-1f,-1f,
+             1f,-1f,-1f,
             //front face
-            1f,1f,1f,
-            -1f,1f,1f,
-            1f,1f,-1f,
-            -1f,1f,1f,
-            -1f,1f,-1f,
-            1f,1f,-1f
+             1f, 1f, 1f,
+             1f,-1f, 1f,
+             1f, 1f,-1f,
+             1f,-1f, 1f,
+             1f,-1f,-1f,
+             1f, 1f,-1f,
+             //back face
+            -1f, 1f, 1f,
+            -1f, 1f,-1f,
+            -1f,-1f, 1f,
+            -1f, 1f,-1f,
+            -1f,-1f,-1f,
+            -1f,-1f, 1f,
+            //right face
+              1f, 1f,1f,
+             -1f, 1f,1f,
+              1f,-1f,1f,
+             -1f, 1f,1f,
+             -1f,-1f,1f,
+              1f,-1f,1f,
+             //left face
+             1f, 1f,-1f,
+             1f,-1f,-1f,
+            -1f, 1f,-1f,
+             1f,-1f,-1f,
+            -1f,-1f,-1f,
+            -1f, 1f,-1f,
         ];
 
         float[] texCoords =
         [
-            //front face
+            //top face
             1f,1f,
             0f,1f,
             1f,0f,
             0f,1f,
             0f,0f,
-            1f,0f
+            1f,0f,
+            //bottom face
+            1f,1f,
+            0f,1f,
+            1f,0f,
+            0f,1f,
+            0f,0f,
+            1f,0f,
+            //front face
+            1f,1f,
+            1f,0f,
+            0f,1f,
+            1f,0f,
+            0f,0f,
+            0f,1f,
+            //back face
+            1f,1f,
+            0f,1f,
+            1f,0f,
+            0f,1f,
+            0f,0f,
+            1f,0f,
+            //right face
+            1f,1f,
+            0f,1f,
+            1f,0f,
+            0f,1f,
+            0f,0f,
+            1f,0f,
+            //left face
+            1f,1f,
+            1f,0f,
+            0f,1f,
+            1f,0f,
+            0f,0f,
+            0f,1f,
         ];
 
         float[] blockData =
         [
-            0f,0f,0f,1f,1f,1f
+            0f,0f,0f,0f,0f,0f,
+            8f,8f,8f,8f,8f,8f,
+            1f,1f,1f,1f,1f,1f,
+            1f,1f,1f,1f,1f,1f,
+            1f,1f,1f,1f,1f,1f,
+            1f,1f,1f,1f,1f,1f
         ];
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
@@ -112,11 +187,24 @@ namespace ConsoleApp1
             {
                 camera.Down((float)e.Time);
             }
+
+            if (input.IsKeyDown(Keys.O))
+            {
+                shaderProgram.SetDrawMode(PrimitiveType.Lines);
+            }
+
+            if (input.IsKeyDown(Keys.P))
+            {
+                shaderProgram.SetDrawMode(PrimitiveType.Triangles);
+            }
         }
 
         protected override void OnLoad() // Load graphics here
         {
             base.OnLoad();
+
+            Title += ": OpenGL Version: " + GL.GetString(StringName.Version);
+
             world = new();
             world.Generate();
             camera.SetProjection(45.0f, (float)width / height);
@@ -146,12 +234,14 @@ namespace ConsoleApp1
             // Block Data
             shaderProgram.SetArrayBufferF(2, 1, VertexAttribPointerType.Float, false, 1, 0, blockData, "blockData");
 
+
+
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
 
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-            //GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Texture2D);
 
             CursorState = CursorState.Grabbed;

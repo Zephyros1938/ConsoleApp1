@@ -21,8 +21,8 @@ namespace ConsoleApp1.Shaders
             GL.ActiveTexture(unit);
             GL.BindTexture(TextureTarget.Texture2D, Handle);
             GL.TexImage2D(TextureTarget2d.Texture2D, 0, TextureComponentCount.Rgba, Tex.Width, Tex.Height, 0, PixelFormat.Rgba, PixelType.UnsignedByte, Tex.Data);
-            //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
-            //GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapS, (int)TextureWrapMode.Clamp);
+            GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureWrapT, (int)TextureWrapMode.Clamp);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMinFilter, (int)TextureMinFilter.Nearest);
             GL.TexParameter(TextureTarget.Texture2D, TextureParameterName.TextureMagFilter, (int)TextureMagFilter.Nearest);
             GL.GenerateMipmap(TextureTarget.Texture2D);

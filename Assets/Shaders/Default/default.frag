@@ -59,7 +59,8 @@ vec2 getTile(float ID)
 void main()
 {
     float ID = tileID;
-    float x = mod(ID, 10.0);
-    float y = floor(ID / 10.0);
-    FragColor = texture(solid, (texCoord + vec2(x,y)) * vec2(0.125,0.1));
+    float x = mod(ID, 8.0);
+    float y = floor(ID / 8.0);
+    //FragColor = texture(solid, (texCoord + vec2(x,y)) * vec2(0.125,0.1));
+    FragColor = vec4(texCoord.x, texCoord.y, (x+y)/2.0, 1.0);
 }
