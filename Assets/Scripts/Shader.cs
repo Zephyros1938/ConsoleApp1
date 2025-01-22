@@ -9,7 +9,7 @@ namespace ConsoleApp1.Shaders
         public readonly int Handle;
         private bool disposedValue;
 
-        public Shader(string vertexPath, string fragmentPath)
+        public Shader(string vertexPath, string fragmentPath, string? geometryPath = null)
         {
             string VertexShaderSource = FileUtils.LoadFile(vertexPath);
             string FragmentShaderSource = FileUtils.LoadFile(fragmentPath);
@@ -34,10 +34,29 @@ namespace ConsoleApp1.Shaders
                 throw new Exception($"Error compiling fragment shader: {GL.GetShaderInfoLog(FragmentShader)}");
             }
 
+            int GeometryShader = 0;
+            if (geometryPath != null)
+            {
+                string GeometryShaderSource = FileUtils.LoadFile(geometryPath);
+                GeometryShader = GL.CreateShader(ShaderType.GeometryShader);
+                GL.ShaderSource(GeometryShader, GeometryShaderSource);
+
+                GL.CompileShader(GeometryShader);
+                GL.GetShader(GeometryShader, ShaderParameter.CompileStatus, out int geometrySuccess);
+                if (geometrySuccess == 0)
+                {
+                    throw new Exception($"Error compiling geometry shader: {GL.GetShaderInfoLog(GeometryShader)}");
+                }
+            }
+
             Handle = GL.CreateProgram();
 
             GL.AttachShader(Handle, VertexShader);
             GL.AttachShader(Handle, FragmentShader);
+            if (geometryPath != null)
+            {
+                GL.AttachShader(Handle, GeometryShader);
+            }
 
             GL.LinkProgram(Handle);
 
@@ -51,7 +70,14 @@ namespace ConsoleApp1.Shaders
             GL.DetachShader(Handle, FragmentShader);
             GL.DeleteShader(VertexShader);
             GL.DeleteShader(FragmentShader);
+
+            if (geometryPath != null)
+            {
+                GL.DetachShader(Handle, GeometryShader);
+                GL.DeleteShader(GeometryShader);
+            }
         }
+
 
         public void Use() => GL.UseProgram(Handle);
 
@@ -122,9 +148,9 @@ namespace ConsoleApp1.Shaders
         }
     }
 
-    public class ShaderProgram(string vertexPath, string fragmentPath)
+    public class ShaderProgram(string vertexPath, string fragmentPath,string? geometryPath = null)
     {
-        public readonly Shader shader = new(vertexPath, fragmentPath);
+        public Shader shader = geometryPath != null ? new Shader(vertexPath, fragmentPath, geometryPath) : new Shader(vertexPath, fragmentPath);
         readonly int VertexArrayObject = GL.GenVertexArray();
         int elementsLength = 0;
         int arraysLength = 0;
