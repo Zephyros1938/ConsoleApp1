@@ -12,7 +12,6 @@ uniform sampler2D transparentSpecular;
 uniform sampler2D transparentNormal;
 uniform int debug;
 
-vec2 textureDimensions = vec2(8., 10.);
 float textureTransparentID = 80.;
 
 void main()

@@ -49,4 +49,109 @@ namespace ConsoleApp1.Testing
             5, 6, 13
         };
     }
+
+    public class Testing2
+    {
+        public readonly static float[] vertices =
+        [
+            //top face
+             1f, 1f, 1f,
+             1f, 1f,-1f,
+            -1f, 1f, 1f,
+             1f, 1f,-1f,
+            -1f, 1f,-1f,
+            -1f, 1f, 1f,
+             //bottom face
+             1f,-1f, 1f,
+            -1f,-1f, 1f,
+             1f,-1f,-1f,
+            -1f,-1f, 1f,
+            -1f,-1f,-1f,
+             1f,-1f,-1f,
+            //front face
+             1f, 1f, 1f,
+             1f,-1f, 1f,
+             1f, 1f,-1f,
+             1f,-1f, 1f,
+             1f,-1f,-1f,
+             1f, 1f,-1f,
+             //back face
+            -1f, 1f, 1f,
+            -1f, 1f,-1f,
+            -1f,-1f, 1f,
+            -1f, 1f,-1f,
+            -1f,-1f,-1f,
+            -1f,-1f, 1f,
+            //right face
+             1f, 1f, 1f,
+            -1f, 1f, 1f,
+             1f,-1f, 1f,
+            -1f, 1f, 1f,
+            -1f,-1f, 1f,
+             1f,-1f, 1f,
+             //left face
+             1f, 1f,-1f,
+             1f,-1f,-1f,
+            -1f, 1f,-1f,
+             1f,-1f,-1f,
+            -1f,-1f,-1f,
+            -1f, 1f,-1f,
+        ];
+
+        public readonly static float[] texCoords =
+        [
+            //top face
+            1f,1f,
+            1f,0f,
+            0f,1f,
+            1f,0f,
+            0f,0f,
+            0f,1f,
+            //bottom face
+            1f,1f,
+            0f,1f,
+            1f,0f,
+            0f,1f,
+            0f,0f,
+            1f,0f,
+            //front face
+            1f,1f,
+            1f,0f,
+            0f,1f,
+            1f,0f,
+            0f,0f,
+            0f,1f,
+            //back face
+            1f,1f,
+            0f,1f,
+            1f,0f,
+            0f,1f,
+            0f,0f,
+            1f,0f,
+            //right face
+            1f,1f,
+            0f,1f,
+            1f,0f,
+            0f,1f,
+            0f,0f,
+            1f,0f,
+            //left face
+            1f,1f,
+            1f,0f,
+            0f,1f,
+            1f,0f,
+            0f,0f,
+            0f,1f,
+        ];
+
+        public readonly static float[] blockData =
+        [
+            0f,0f,0f,0f,0f,0f,
+            8f,8f,8f,8f,8f,8f,
+            1f,1f,1f,1f,1f,1f,
+            1f,1f,1f,1f,1f,1f,
+            1f,1f,1f,1f,1f,1f,
+            1f,1f,1f,1f,1f,1f
+        ];
+    }
 }

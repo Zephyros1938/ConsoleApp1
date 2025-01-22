@@ -13,118 +13,19 @@ namespace ConsoleApp1
     public class Game(int width, int height, string title, GameWindowSettings gameWindowSettings) : GameWindow(gameWindowSettings, new NativeWindowSettings() { ClientSize = (width, height), Title = title })
     {
         bool firstMove = true;
+        bool cameraControl = true;
 
         Matrix4 ModelMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.0f));
 
         public readonly Camera camera = new(new(0.0f, 0.0f, 0.0f));
-
-        bool cameraControl = true;
         ShaderProgram shaderProgram;
 
         private Thread _WorldThread;
 
         World.World world = new();
 
-        float[] vertices =
-        [
-            //top face
-             1f, 1f, 1f,
-             1f, 1f,-1f,
-            -1f, 1f, 1f,
-             1f, 1f,-1f,
-            -1f, 1f,-1f,
-            -1f, 1f, 1f,
-             //bottom face
-             1f,-1f, 1f,
-            -1f,-1f, 1f,
-             1f,-1f,-1f,
-            -1f,-1f, 1f,
-            -1f,-1f,-1f,
-             1f,-1f,-1f,
-            //front face
-             1f, 1f, 1f,
-             1f,-1f, 1f,
-             1f, 1f,-1f,
-             1f,-1f, 1f,
-             1f,-1f,-1f,
-             1f, 1f,-1f,
-             //back face
-            -1f, 1f, 1f,
-            -1f, 1f,-1f,
-            -1f,-1f, 1f,
-            -1f, 1f,-1f,
-            -1f,-1f,-1f,
-            -1f,-1f, 1f,
-            //right face
-             1f, 1f, 1f,
-            -1f, 1f, 1f,
-             1f,-1f, 1f,
-            -1f, 1f, 1f,
-            -1f,-1f, 1f,
-             1f,-1f, 1f,
-             //left face
-             1f, 1f,-1f,
-             1f,-1f,-1f,
-            -1f, 1f,-1f,
-             1f,-1f,-1f,
-            -1f,-1f,-1f,
-            -1f, 1f,-1f,
-        ];
-
-        float[] texCoords =
-        [
-            //top face
-            1f,1f,
-            1f,0f,
-            0f,1f,
-            1f,0f,
-            0f,0f,
-            0f,1f,
-            //bottom face
-            1f,1f,
-            0f,1f,
-            1f,0f,
-            0f,1f,
-            0f,0f,
-            1f,0f,
-            //front face
-            1f,1f,
-            1f,0f,
-            0f,1f,
-            1f,0f,
-            0f,0f,
-            0f,1f,
-            //back face
-            1f,1f,
-            0f,1f,
-            1f,0f,
-            0f,1f,
-            0f,0f,
-            1f,0f,
-            //right face
-            1f,1f,
-            0f,1f,
-            1f,0f,
-            0f,1f,
-            0f,0f,
-            1f,0f,
-            //left face
-            1f,1f,
-            1f,0f,
-            0f,1f,
-            1f,0f,
-            0f,0f,
-            0f,1f,
-        ];
-
-        float[] blockData =
-        [
-            0f,0f,0f,0f,0f,0f,
-            8f,8f,8f,8f,8f,8f,
-            1f,1f,1f,1f,1f,1f,
-            1f,1f,1f,1f,1f,1f,
-            1f,1f,1f,1f,1f,1f,
-            1f,1f,1f,1f,1f,1f
+        float[] vertices = [
+            0f,0f,0f
         ];
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
@@ -226,7 +127,7 @@ namespace ConsoleApp1
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-            shaderProgram = new("Assets/Shaders/Default/default.vert", "Assets/Shaders/Default/default.frag");
+            shaderProgram = new("Assets/Shaders/DefaultGeometry/default.vert", "Assets/Shaders/DefaultGeometry/default.frag", "Assets/Shaders/DefaultGeometry/default.geom");
 
             shaderProgram.SetMatrix4("model", ModelMatrix);
             shaderProgram.SetMatrix4("view", camera.GetViewMatrix());
@@ -244,10 +145,10 @@ namespace ConsoleApp1
             shaderProgram.SetArrays(vertices, "vertices");
 
             // Colors
-            shaderProgram.SetArrayBufferF(1, 2, VertexAttribPointerType.Float, false, 2, 0, texCoords, "texCoords");
+            //shaderProgram.SetArrayBufferF(1, 2, VertexAttribPointerType.Float, false, 2, 0, Testing.Testing2.texCoords, "texCoords");
 
             // Block Data
-            shaderProgram.SetArrayBufferF(2, 1, VertexAttribPointerType.Float, false, 1, 0, blockData, "blockData");
+            //shaderProgram.SetArrayBufferF(2, 1, VertexAttribPointerType.Float, false, 1, 0, Testing.Testing2.blockData, "blockData");
 
 
 
@@ -256,7 +157,7 @@ namespace ConsoleApp1
             GL.Enable(EnableCap.DepthTest);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-            GL.Enable(EnableCap.CullFace);
+            //GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Texture2D);
 
             CursorState = CursorState.Grabbed;
@@ -268,7 +169,7 @@ namespace ConsoleApp1
         {
             base.OnRenderFrame(e);
 
-            shaderProgram.SetMatrix4("model", ModelMatrix);
+            //shaderProgram.SetMatrix4("model", ModelMatrix);
             shaderProgram.SetMatrix4("view", camera.GetViewMatrix());
             shaderProgram.SetMatrix4("projection", camera.GetProjectionMatrix());
 
