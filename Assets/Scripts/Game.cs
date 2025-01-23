@@ -24,9 +24,13 @@ namespace ConsoleApp1
 
         World.World world = new();
 
-        float[] vertices = [
-            0f,0f,0f
+        float[] verticeCenters = [ //center of cubes
+            0f,0f,0f, // center 1, can see
+            1f,1f,1f, // center 2, cannot
+            2f,2f,2f // center 3, cannot
         ];
+
+        float[] vertices = [];
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
@@ -122,7 +126,6 @@ namespace ConsoleApp1
             Title += ": OpenGL Version: " + GL.GetString(StringName.Version);
 
             world = new();
-            world.Generate();
             camera.SetProjection(45.0f, (float)width / height);
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -132,6 +135,7 @@ namespace ConsoleApp1
             shaderProgram.SetMatrix4("model", ModelMatrix);
             shaderProgram.SetMatrix4("view", camera.GetViewMatrix());
             shaderProgram.SetMatrix4("projection", camera.GetProjectionMatrix());
+            shaderProgram.SetFloat("blockSize", world.GetBlockSize());
             shaderProgram.AddTexture(new("Assets/Images/textures.png", TextureUnit.Texture0), 0, "solid");
             shaderProgram.AddTexture(new("Assets/Images/specular.png", TextureUnit.Texture1), 1, "solidSpecular");
             shaderProgram.AddTexture(new("Assets/Images/normals.png", TextureUnit.Texture2), 2, "solidNormal");

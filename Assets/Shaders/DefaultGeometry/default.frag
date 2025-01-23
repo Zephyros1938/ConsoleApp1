@@ -1,6 +1,8 @@
 #version 330 core
 out vec4 FragColor;
 
+in vec2 texCoord;
+
 uniform sampler2D solid;
 uniform sampler2D solidSpecular;
 uniform sampler2D solidNormal;
@@ -10,5 +12,5 @@ uniform sampler2D transparentNormal;
 
 void main()
 {
-    FragColor = vec4(1.,0.,0.,1.);
+    FragColor = vec4(texCoord.x, texCoord.y,0.,1.);
 }
