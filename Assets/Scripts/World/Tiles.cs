@@ -20,201 +20,201 @@ namespace ConsoleApp1.World.Tiles
     {
         // Nontransparent Blocks
         // Row 0
-        public static readonly BlockFace grassTop = new(0f, 0f, 0f);
-        public static readonly BlockFace grassSide = new(1f, 1f, 0f);
-        public static readonly BlockFace sandSoft = new(2f, 2f, 0f);
-        public static readonly BlockFace sandRough = new(3f, 3f, 0f);
-        public static readonly BlockFace rock = new(4f, 4f, 0f);
-        public static readonly BlockFace rockOreGold = new(5f, 5f, 0f);
-        public static readonly BlockFace coconut = new(6f, 6f, 0f);
-        public static readonly BlockFace snow = new(7f, 7f, 0f);
+        public static readonly uint grassTop = 0;
+        public static readonly uint grassSide = 1;
+        public static readonly uint sandSoft = 2;
+        public static readonly uint sandRough = 3;
+        public static readonly uint rock = 4;
+        public static readonly uint rockOreGold = 5;
+        public static readonly uint coconut = 6;
+        public static readonly uint snow = 7;
 
         // Row 1
-        public static readonly BlockFace dirt = new(8f, 0f, 1f);
-        public static readonly BlockFace logSideNormal = new(9, 1, 1);
-        public static readonly BlockFace logTop = new(10f, 2f, 1f);
-        public static readonly BlockFace logSideBirch = new(11f, 3f, 1f);
-        public static readonly BlockFace rockOreSaphire = new(12f, 4f, 1f);
-        public static readonly BlockFace rockOreEmerald = new(13f, 5f, 1f);
-        public static readonly BlockFace logSidePalm = new(14f, 6f, 1f);
-        public static readonly BlockFace oreBlockIron = new(15f, 7f, 1f);
+        public static readonly uint dirt = 8;
+        public static readonly uint logSideNormal = 9;
+        public static readonly uint logTop = 10;
+        public static readonly uint logSideBirch = 11;
+        public static readonly uint rockOreSaphire = 12;
+        public static readonly uint rockOreEmerald = 13;
+        public static readonly uint logSidePalm = 14;
+        public static readonly uint oreBlockIron = 15;
 
         // Row 2
-        public static readonly BlockFace rockQuartz = new(16f, 0f, 2f);
-        public static readonly BlockFace craftingStationFurnaceFront = new(17f, 1f, 2f);
-        public static readonly BlockFace rockOreRuby = new(18f, 2f, 2f);
-        public static readonly BlockFace rockMagma = new(19f, 3f, 2f);
-        public static readonly BlockFace bricksSnow = new(20f, 4f, 2f);
-        public static readonly BlockFace rockOreCoal = new(21f, 5f, 2f);
-        public static readonly BlockFace planksNormal = new(22f, 6f, 2f);
-        public static readonly BlockFace bricksRed = new(23f, 7f, 2f);
+        public static readonly uint rockQuartz = 16;
+        public static readonly uint craftingStationFurnaceFront = 17;
+        public static readonly uint rockOreRuby = 18;
+        public static readonly uint rockMagma = 19;
+        public static readonly uint bricksSnow = 20;
+        public static readonly uint rockOreCoal = 21;
+        public static readonly uint planksNormal = 22;
+        public static readonly uint bricksRed = 23;
 
         // Row 3
-        public static readonly BlockFace rockMagmaHot = new(24f, 0f, 3f);
-        public static readonly BlockFace craftingStationCauldronFront = new(25f, 1f, 3f);
-        public static readonly BlockFace bricksMagma = new(26f, 2f, 3f);
-        public static readonly BlockFace tntSide = new(27f, 3f, 3f);
-        public static readonly BlockFace tntTop = new(28f, 4f, 3f);
-        public static readonly BlockFace lampSide = new(29f, 5f, 3f);
-        public static readonly BlockFace craftingStationWorkbenchBottom = new(30f, 6f, 3f);
-        public static readonly BlockFace rockOreSulfur = new(31f, 7f, 3f);
+        public static readonly uint rockMagmaHot = 24;
+        public static readonly uint craftingStationCauldronFront = 25;
+        public static readonly uint bricksMagma = 26;
+        public static readonly uint tntSide = 27;
+        public static readonly uint tntTop = 28;
+        public static readonly uint lampSide = 29;
+        public static readonly uint craftingStationWorkbenchBottom = 30;
+        public static readonly uint rockOreSulfur = 31;
 
         // Row 4
-        public static readonly BlockFace sandGravel = new(32f, 0f, 4f);
-        public static readonly BlockFace rockOreIron = new(33f, 1f, 4f);
-        public static readonly BlockFace bricksStones = new(34f, 2f, 4f);
-        public static readonly BlockFace bricksStonesMossy = new(35f, 3f, 4f);
-        public static readonly BlockFace bookcase = new(36f, 4f, 4f);
-        public static readonly BlockFace oreBlockGold = new(37f, 5f, 4f);
-        public static readonly BlockFace bricksSandstone = new(38f, 6f, 4f);
-        public static readonly BlockFace rockOreUnobtainium = new(39f, 7f, 4f);
+        public static readonly uint sandGravel = 32;
+        public static readonly uint rockOreIron = 33;
+        public static readonly uint bricksStones = 34;
+        public static readonly uint bricksStonesMossy = 35;
+        public static readonly uint bookcase = 36;
+        public static readonly uint oreBlockGold = 37;
+        public static readonly uint bricksSandstone = 38;
+        public static readonly uint rockOreUnobtainium = 39;
 
         // Row 5
-        public static readonly BlockFace rockOreKlorium = new(40f, 0f, 5f);
-        public static readonly BlockFace rockOreCryptonite = new(41f, 1f, 5f);
-        public static readonly BlockFace craftingStationPaintingTableTop = new(42f, 2f, 5f);
-        public static readonly BlockFace pumkinFront = new(43f, 3f, 5f);
-        public static readonly BlockFace pumkinTop = new(44f, 4f, 5f);
-        public static readonly BlockFace pumkinSide = new(45f, 5f, 5f);
-        public static readonly BlockFace bricksForgottenStoneMossy = new(46f, 6f, 5f);
-        public static readonly BlockFace bricksForgottenStoneRune = new(47f, 7f, 5f);
+        public static readonly uint rockOreKlorium = 40;
+        public static readonly uint rockOreCryptonite = 41;
+        public static readonly uint craftingStationPaintingTableTop = 42;
+        public static readonly uint pumkinFront = 43;
+        public static readonly uint pumkinTop = 44;
+        public static readonly uint pumkinSide = 45;
+        public static readonly uint bricksForgottenStoneMossy = 46;
+        public static readonly uint bricksForgottenStoneRune = 47;
 
         // Row 6
-        public static readonly BlockFace bricksForgottenStone = new(48f, 0f, 6f);
-        public static readonly BlockFace rockSmooth = new(49f, 1f, 6f);
-        public static readonly BlockFace mobSpawner = new(50f, 2f, 6f);
-        public static readonly BlockFace sponge = new(51f, 3f, 6f);
-        public static readonly BlockFace carpet = new(52f, 4f, 6f);
-        public static readonly BlockFace rockPath = new(53f, 5f, 6f);
-        public static readonly BlockFace oreBlockPlating = new(54f, 6f, 6f);
-        public static readonly BlockFace craftingStationWorkbenchTop = new(55f, 7f, 6f);
+        public static readonly uint bricksForgottenStone = 48;
+        public static readonly uint rockSmooth = 49;
+        public static readonly uint mobSpawner = 50;
+        public static readonly uint sponge = 51;
+        public static readonly uint carpet = 52;
+        public static readonly uint rockPath = 53;
+        public static readonly uint oreBlockPlating = 54;
+        public static readonly uint craftingStationWorkbenchTop = 55;
 
         // Row 7
-        public static readonly BlockFace craftingStationWorkbenchSide = new(56f, 0f, 7f);
-        public static readonly BlockFace craftingStationAnvil = new(57f, 1f, 7f);
-        public static readonly BlockFace planksWaxed = new(58f, 2f, 7f);
-        public static readonly BlockFace melonSide = new(59f, 3f, 7f);
-        public static readonly BlockFace melonTop = new(60f, 4f, 7f);
-        public static readonly BlockFace planksBirch = new(61f, 5f, 7f);
-        public static readonly BlockFace planksPalm = new(62f, 6f, 7f);
-        public static readonly BlockFace electricitySource = new(63f, 7f, 7f);
+        public static readonly uint craftingStationWorkbenchSide = 56;
+        public static readonly uint craftingStationAnvil = 57;
+        public static readonly uint planksWaxed = 58;
+        public static readonly uint melonSide = 59;
+        public static readonly uint melonTop = 60;
+        public static readonly uint planksBirch = 61;
+        public static readonly uint planksPalm = 62;
+        public static readonly uint electricitySource = 63;
 
         // Row 8
-        public static readonly BlockFace rockQuartzSoft = new(64f, 0f, 8f);
-        public static readonly BlockFace rockQuartzSmooth = new(65f, 1f, 8f);
-        public static readonly BlockFace magicStone = new(66f, 2f, 8f); // No idea wtf this is supposed to be in the texture so i just set it to this lol - Zephyros1938
-        public static readonly BlockFace magicStoneSide = new(67f, 3f, 8f);
-        public static readonly BlockFace magicStoneTop = new(68f, 4f, 8f);
-        public static readonly BlockFace magicMoss = new(69f, 5f, 8f);
-        public static readonly BlockFace magicGold = new(70f, 6f, 8f);
-        public static readonly BlockFace pillarBase = new(71f, 7f, 8f);
+        public static readonly uint rockQuartzSoft = 64;
+        public static readonly uint rockQuartzSmooth = 65;
+        public static readonly uint magicStone = 66; // No idea wtf this is supposed to be in the texture so i just set it to this lol - Zephyros1938
+        public static readonly uint magicStoneSide = 67;
+        public static readonly uint magicStoneTop = 68;
+        public static readonly uint magicMoss = 69;
+        public static readonly uint magicGold = 70;
+        public static readonly uint pillarBase = 71;
 
         // Row 9
-        public static readonly BlockFace pillarMid = new(72f, 0f, 9f);
-        public static readonly BlockFace pillarTop = new(73f, 1f, 9f);
-        public static readonly BlockFace lampTop = new(74f, 2f, 9f);
-        public static readonly BlockFace alienMoss1 = new(75f, 3f, 9f); // I also have no idea what this is supposed to be either help - Zephyros1938
-        public static readonly BlockFace alienMoss2 = new(76f, 4f, 9f);
-        public static readonly BlockFace alienMoss3 = new(77f, 5f, 9f);
-        public static readonly BlockFace alienMoss4 = new(78f, 6f, 9f);
-        public static readonly BlockFace alienMoss5 = new(79f, 7f, 9f);
+        public static readonly uint pillarMid = 72;
+        public static readonly uint pillarTop = 73;
+        public static readonly uint lampTop = 74;
+        public static readonly uint alienMoss1 = 75; // I also have no idea what this is supposed to be either help - Zephyros1938
+        public static readonly uint alienMoss2 = 76;
+        public static readonly uint alienMoss3 = 77;
+        public static readonly uint alienMoss4 = 78;
+        public static readonly uint alienMoss5 = 79;
 
         // Transparent Blocks
         // Row 0
-        public static readonly BlockFace leavesOak = new(80f, 0f, 0f);
-        public static readonly BlockFace cactiSide = new(81f, 1f, 0f);
-        public static readonly BlockFace bushBerry = new(82f, 2f, 0f);
-        public static readonly BlockFace thatchFlowers = new(83f, 3f, 0f);
-        public static readonly BlockFace leavesOakApples = new(84f, 4f, 0f);
-        public static readonly BlockFace leavesOakBirdnest = new(85f, 5f, 0f);
-        public static readonly BlockFace bones = new(86f, 6f, 0f);
-        public static readonly BlockFace cobwebs = new(87f, 7f, 0f);
+        public static readonly uint leavesOak = 80;
+        public static readonly uint cactiSide = 81;
+        public static readonly uint bushBerry = 82;
+        public static readonly uint thatchFlowers = 83;
+        public static readonly uint leavesOakApples = 84;
+        public static readonly uint leavesOakBirdnest = 85;
+        public static readonly uint bones = 86;
+        public static readonly uint cobwebs = 87;
 
         // Row 1
-        public static readonly BlockFace foliage = new(88f, 0f, 1f);
-        public static readonly BlockFace cactiCenter = new(89f, 1f, 1f);
-        public static readonly BlockFace gemblockEmerald = new(90f, 2f, 1f);
-        public static readonly BlockFace gemblockSaphire = new(91f, 3f, 1f);
-        public static readonly BlockFace gemblockRuby = new(92f, 4f, 1f);
-        public static readonly BlockFace thatchIron = new(93f, 5f, 1f);
-        public static readonly BlockFace leavesSpruce = new(94f, 6f, 1f);
-        public static readonly BlockFace leavesAcacia = new(95f, 7f, 1f);
+        public static readonly uint foliage = 88;
+        public static readonly uint cactiCenter = 89;
+        public static readonly uint gemblockEmerald = 90;
+        public static readonly uint gemblockSaphire = 91;
+        public static readonly uint gemblockRuby = 92;
+        public static readonly uint thatchIron = 93;
+        public static readonly uint leavesSpruce = 94;
+        public static readonly uint leavesAcacia = 95;
 
         // Row 2
-        public static readonly BlockFace liquidAcid = new(96f, 0f, 2f);
-        public static readonly BlockFace leavesPine = new(97f, 1f, 2f);
-        public static readonly BlockFace leavesTropical = new(98f, 2f, 2f);
-        public static readonly BlockFace liquidWater = new(99f, 3f, 2f);
-        public static readonly BlockFace ice = new(100f, 4f, 2f);
-        public static readonly BlockFace liquidWaterLillypad = new(101f, 5f, 2f);
-        public static readonly BlockFace bushIvy = new(102f, 6f, 2f);
-        public static readonly BlockFace bushBlueberries = new(103f, 7f, 2f);
+        public static readonly uint liquidAcid = 96;
+        public static readonly uint leavesPine = 97;
+        public static readonly uint leavesTropical = 98;
+        public static readonly uint liquidWater = 99;
+        public static readonly uint ice = 100;
+        public static readonly uint liquidWaterLillypad = 101;
+        public static readonly uint bushIvy = 102;
+        public static readonly uint bushBlueberries = 103;
 
         // Row 3
-        public static readonly BlockFace liquidMagma = new(104f, 0f, 3f);
-        public static readonly BlockFace thatchOvergrown = new(105f, 1f, 3f);
-        public static readonly BlockFace leavesJungleThick = new(106f, 2f, 3f);
-        public static readonly BlockFace sapplingRedwood = new(107f, 3f, 3f);
-        public static readonly BlockFace thatch = new(108f, 4f, 3f);
-        public static readonly BlockFace flowerYellow = new(109f, 5f, 3f);
-        public static readonly BlockFace flowerRed = new(110f, 6f, 3f);
-        public static readonly BlockFace flowerWhite = new(111f, 7f, 3f);
+        public static readonly uint liquidMagma = 104;
+        public static readonly uint thatchOvergrown = 105;
+        public static readonly uint leavesJungleThick = 106;
+        public static readonly uint sapplingRedwood = 107;
+        public static readonly uint thatch = 108;
+        public static readonly uint flowerYellow = 109;
+        public static readonly uint flowerRed = 110;
+        public static readonly uint flowerWhite = 111;
 
         // Row 4
-        public static readonly BlockFace glass = new(112f, 0f, 4f);
-        public static readonly BlockFace leavesAcaciaBirdnest = new(113f, 1f, 4f);
-        public static readonly BlockFace leavesJungleSparse = new(114f, 2f, 4f);
-        public static readonly BlockFace leavesJungle = new(115f, 3f, 4f);
-        public static readonly BlockFace leavesJungleFlowering = new(116f, 4f, 4f);
-        public static readonly BlockFace leavesBirch = new(117f, 5f, 4f);
-        public static readonly BlockFace cloud = new(118f, 6f, 4f);
-        public static readonly BlockFace cloudStormy = new(119f, 7f, 4f);
+        public static readonly uint glass = 112;
+        public static readonly uint leavesAcaciaBirdnest = 113;
+        public static readonly uint leavesJungleSparse = 114;
+        public static readonly uint leavesJungle = 115;
+        public static readonly uint leavesJungleFlowering = 116;
+        public static readonly uint leavesBirch = 117;
+        public static readonly uint cloud = 118;
+        public static readonly uint cloudStormy = 119;
 
         // Row 5
-        public static readonly BlockFace glassPane = new(120f, 0f, 5f);
-        public static readonly BlockFace demonWeeds = new(121f, 1f, 5f);
-        public static readonly BlockFace gemblockCoal = new(122f, 2f, 5f);
-        public static readonly BlockFace beehive = new(123f, 3f, 5f);
-        public static readonly BlockFace shrubTwiggy = new(124f, 4f, 5f);
-        public static readonly BlockFace shrubFan = new(125f, 5f, 5f);
-        public static readonly BlockFace shrub = new(126f, 6f, 5f);
-        public static readonly BlockFace candle = new(127f, 7f, 5f);
+        public static readonly uint glassPane = 120;
+        public static readonly uint demonWeeds = 121;
+        public static readonly uint gemblockCoal = 122;
+        public static readonly uint beehive = 123;
+        public static readonly uint shrubTwiggy = 124;
+        public static readonly uint shrubFan = 125;
+        public static readonly uint shrub = 126;
+        public static readonly uint candle = 127;
 
         // Row 6
-        public static readonly BlockFace wheat1 = new(128f, 0f, 6f);
-        public static readonly BlockFace wheat2 = new(129f, 1f, 6f);
-        public static readonly BlockFace wheat3 = new(130f, 2f, 6f);
-        public static readonly BlockFace wheat4 = new(131f, 3f, 6f);
-        public static readonly BlockFace shrubCacti = new(132f, 4f, 6f);
-        public static readonly BlockFace sapplingTreeApples = new(133f, 5f, 6f);
-        public static readonly BlockFace sapplingTreeTropical = new(134f, 6f, 6f);
-        public static readonly BlockFace grass1 = new(135f, 7f, 6f);
+        public static readonly uint wheat1 = 128;
+        public static readonly uint wheat2 = 129;
+        public static readonly uint wheat3 = 130;
+        public static readonly uint wheat4 = 131;
+        public static readonly uint shrubCacti = 132;
+        public static readonly uint sapplingTreeApples = 133;
+        public static readonly uint sapplingTreeTropical = 134;
+        public static readonly uint grass1 = 135;
 
         // Row 7
-        public static readonly BlockFace sapplingTreeAcaciaLong = new(136f, 0f, 7f);
-        public static readonly BlockFace sapplingTreeSwamp = new(137f, 1f, 7f);
-        public static readonly BlockFace sapplingTreePalm = new(138f, 2f, 7f);
-        public static readonly BlockFace sapplingTreeBirch = new(139f, 3f, 7f);
-        public static readonly BlockFace sapplingTreeAcacia = new(140f, 4f, 7f);
-        public static readonly BlockFace sapplingTreeTwiggy = new(141f, 5f, 7f);
-        public static readonly BlockFace sapplingTreePine = new(142f, 6f, 7f);
-        public static readonly BlockFace sapplingTreeOak = new(143f, 7f, 7f);
+        public static readonly uint sapplingTreeAcaciaLong = 136;
+        public static readonly uint sapplingTreeSwamp = 137;
+        public static readonly uint sapplingTreePalm = 138;
+        public static readonly uint sapplingTreeBirch = 139;
+        public static readonly uint sapplingTreeAcacia = 140;
+        public static readonly uint sapplingTreeTwiggy = 141;
+        public static readonly uint sapplingTreePine = 142;
+        public static readonly uint sapplingTreeOak = 143;
 
         // Row 8
-        public static readonly BlockFace alienFlowers = new(144f, 0f, 8f);
-        public static readonly BlockFace cloudDroplets = new(145f, 1f, 8f);
-        public static readonly BlockFace alienGrass = new(146f, 2f, 8f);
-        public static readonly BlockFace alienShrubFlower = new(147f, 3f, 8f);
-        public static readonly BlockFace grass2 = new(148f, 4f, 8f);
-        public static readonly BlockFace moss = new(149f, 5f, 8f);
-        public static readonly BlockFace alienMoss = new(150f, 6f, 8f);
-        public static readonly BlockFace vines1 = new(151f, 7f, 8f);
+        public static readonly uint alienFlowers = 144;
+        public static readonly uint cloudDroplets = 145;
+        public static readonly uint alienGrass = 146;
+        public static readonly uint alienShrubFlower = 147;
+        public static readonly uint grass2 = 148;
+        public static readonly uint moss = 149;
+        public static readonly uint alienMoss = 150;
+        public static readonly uint vines1 = 151;
 
         // Row 9
-        public static readonly BlockFace chain = new(152f, 0f, 9f);
-        public static readonly BlockFace vines2 = new(153f, 1f, 9f);
-        public static readonly BlockFace grass3 = new(154f, 2f, 9f);
-        public static readonly BlockFace coral = new(155f, 3f, 9f);
+        public static readonly uint chain = 152;
+        public static readonly uint vines2 = 153;
+        public static readonly uint grass3 = 154;
+        public static readonly uint coral = 155;
 
         public TileIDs()
         {

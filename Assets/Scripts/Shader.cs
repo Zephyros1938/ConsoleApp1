@@ -189,6 +189,17 @@ namespace ConsoleApp1.Shaders
             arraysLength = arrays.Length;
         }
 
+        public void SetArrays(Vector3[] arrays, string name = "UNNAMED")
+        {
+            int ID = GL.GenBuffer();
+            buffers.Add((name, ID));
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
+            GL.BufferData(BufferTarget.ArrayBuffer, arrays.Length * Vector3.SizeInBytes * sizeof(float), arrays, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.EnableVertexAttribArray(0);
+            arraysLength = arrays.Length;
+        }
+
         /// <summary>
         /// Sets up a vertex array buffer for floating-point data, configuring the vertex attribute pointer and enabling the attribute.
         /// </summary>
@@ -223,6 +234,28 @@ namespace ConsoleApp1.Shaders
             buffers.Add((name, ID));
             GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
             GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(float), data, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(index, size, type, normalized, stride * sizeof(float), offset);
+            GL.EnableVertexAttribArray(index);
+            action?.Invoke();
+        }
+
+        public void SetArrayBufferVec3(int index, int size, VertexAttribPointerType type, bool normalized, int stride, int offset, Vector3[] data, string name = "UNNAMED", Action? action = null)
+        {
+            int ID = GL.GenBuffer();
+            buffers.Add((name, ID));
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
+            GL.BufferData(BufferTarget.ArrayBuffer, data.Length * Vector3.SizeInBytes * sizeof(float), data, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(index, size, type, normalized, stride * sizeof(float), offset);
+            GL.EnableVertexAttribArray(index);
+            action?.Invoke();
+        }
+
+        public void SetArrayBufferVec2(int index, int size, VertexAttribPointerType type, bool normalized, int stride, int offset, Vector2[] data, string name = "UNNAMED", Action? action = null)
+        {
+            int ID = GL.GenBuffer();
+            buffers.Add((name, ID));
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
+            GL.BufferData(BufferTarget.ArrayBuffer, data.Length * Vector2.SizeInBytes * sizeof(float), data, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(index, size, type, normalized, stride * sizeof(float), offset);
             GL.EnableVertexAttribArray(index);
             action?.Invoke();

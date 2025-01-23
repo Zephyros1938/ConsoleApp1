@@ -18,19 +18,10 @@ namespace ConsoleApp1
         Matrix4 ModelMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.0f));
 
         public readonly Camera camera = new(new(0.0f, 0.0f, 0.0f));
-        ShaderProgram shaderProgram;
+        List<ShaderProgram> ShaderProgramList = [];
+        private readonly Thread _WorldThread = new(new ThreadStart(WorldGeneration));
 
-        private Thread _WorldThread;
-
-        World.World world = new();
-
-        float[] verticeCenters = [ //center of cubes
-            0f,0f,0f, // center 1, can see
-            1f,1f,1f, // center 2, cannot
-            2f,2f,2f // center 3, cannot
-        ];
-
-        float[] vertices = [];
+        static World.World world = new();
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
@@ -97,17 +88,7 @@ namespace ConsoleApp1
                 camera.Down((float)e.Time);
             }
 
-            if (input.IsKeyDown(Keys.Q))
-            {
-                shaderProgram.SetDrawMode(PrimitiveType.Lines);
-            }
-
-            if (input.IsKeyDown(Keys.E))
-            {
-                shaderProgram.SetDrawMode(PrimitiveType.Triangles);
-            }
-
-            if(input.IsKeyPressed(Keys.T))
+            if (input.IsKeyPressed(Keys.T))
             {
                 cameraControl = !cameraControl;
                 CursorState = cameraControl == true ? CursorState = CursorState.Grabbed : CursorState = CursorState.Normal;
@@ -115,8 +96,13 @@ namespace ConsoleApp1
 
             if(input.IsKeyPressed(Keys.R))
             {
-                shaderProgram.ToggleDebug();
+                ShaderProgramList[0].ToggleDebug();
             }
+        }
+
+        static void WorldGeneration()
+        {
+            world.Generate();
         }
 
         protected override void OnLoad() // Load graphics here
@@ -125,17 +111,17 @@ namespace ConsoleApp1
 
             Title += ": OpenGL Version: " + GL.GetString(StringName.Version);
 
-            world = new();
+            _WorldThread.Start();
+
             camera.SetProjection(45.0f, (float)width / height);
 
             GL.ClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 
-            shaderProgram = new("Assets/Shaders/DefaultGeometry/default.vert", "Assets/Shaders/DefaultGeometry/default.frag", "Assets/Shaders/DefaultGeometry/default.geom");
+            ShaderProgram shaderProgram = new("Assets/Shaders/Default/default.vert", "Assets/Shaders/Default/default.frag"/*, "Assets/Shaders/DefaultGeometry/default.geom"*/);
 
             shaderProgram.SetMatrix4("model", ModelMatrix);
             shaderProgram.SetMatrix4("view", camera.GetViewMatrix());
             shaderProgram.SetMatrix4("projection", camera.GetProjectionMatrix());
-            shaderProgram.SetFloat("blockSize", world.GetBlockSize());
             shaderProgram.AddTexture(new("Assets/Images/textures.png", TextureUnit.Texture0), 0, "solid");
             shaderProgram.AddTexture(new("Assets/Images/specular.png", TextureUnit.Texture1), 1, "solidSpecular");
             shaderProgram.AddTexture(new("Assets/Images/normals.png", TextureUnit.Texture2), 2, "solidNormal");
@@ -145,23 +131,29 @@ namespace ConsoleApp1
 
             shaderProgram.Bind();
 
+            _WorldThread.Join();
+
+            Vector3[] BlockVertices = world.GetChunk(0).GetBlockVertices();
+            (Vector3[], Vector2[]) blockData = BlockUtilities.BlockCube(BlockVertices);
+
             // Vertices
-            shaderProgram.SetArrays(vertices, "vertices");
+            shaderProgram.SetArrays(blockData.Item1, "vertices");
 
             // Colors
-            //shaderProgram.SetArrayBufferF(1, 2, VertexAttribPointerType.Float, false, 2, 0, Testing.Testing2.texCoords, "texCoords");
+            shaderProgram.SetArrayBufferVec2(1, 2, VertexAttribPointerType.Float, false, 2, 0, blockData.Item2, "texCoords");
 
             // Block Data
-            //shaderProgram.SetArrayBufferF(2, 1, VertexAttribPointerType.Float, false, 1, 0, Testing.Testing2.blockData, "blockData");
+            shaderProgram.SetArrayBufferF(2, 1, VertexAttribPointerType.Float, false, 1, 0, Testing.Testing2.blockData, "blockData");
 
+            ShaderProgram.Unbind();
 
-
-            GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
+            ShaderProgramList.Add(shaderProgram);
 
             GL.Enable(EnableCap.DepthTest);
+            GL.DepthFunc(DepthFunction.Less);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-            //GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Texture2D);
 
             CursorState = CursorState.Grabbed;
@@ -174,14 +166,17 @@ namespace ConsoleApp1
             base.OnRenderFrame(e);
 
             //shaderProgram.SetMatrix4("model", ModelMatrix);
-            shaderProgram.SetMatrix4("view", camera.GetViewMatrix());
-            shaderProgram.SetMatrix4("projection", camera.GetProjectionMatrix());
+            ShaderProgramList[0].SetMatrix4("view", camera.GetViewMatrix());
+            ShaderProgramList[0].SetMatrix4("projection", camera.GetProjectionMatrix());
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            shaderProgram.Bind();
-            shaderProgram.Use();
-            shaderProgram.DrawArrays();
+            foreach (ShaderProgram s in ShaderProgramList)
+            {
+                s.Bind();
+                s.Use();
+                s.DrawArrays();
+            }
 
             SwapBuffers();
         }
@@ -201,7 +196,11 @@ namespace ConsoleApp1
         {
             base.OnUnload();
 
-            shaderProgram.Dispose();
+            foreach (ShaderProgram s in ShaderProgramList)
+            {
+                s.Dispose();
+            }
+            _WorldThread.Join();
 
             // Code goes here
         }
