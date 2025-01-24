@@ -6,13 +6,14 @@ namespace ConsoleApp1.World
     public class World
     {
         static Vector3i chunkSize = (2, 2, 2);
-        static Vector2i worldSize = (10, 10);
-        public readonly List<Chunk> chunkList = [];
-        static UInt64 chunkIndex = 0;
-        string worldName;
+        public readonly Vector2i worldSize = (100, 100);
+        public List<Chunk> ChunkList {get;} = [];
+        static uint chunkIndex = 0;
+        private readonly string worldName;
         public World(string worldName)
         {
             this.worldName = worldName;
+            UserData.DeleteFile(worldName);
             Console.WriteLine($"Worlds Path: {UserData._WorldsPath}");
         }
 
@@ -33,16 +34,19 @@ namespace ConsoleApp1.World
                     }
                 }
             }
-            chunkList.Add(currentChunk);
+            ChunkList.Add(currentChunk);
         }
 
         public void SaveChunkToFile(Chunk chunk)
         {
-            Console.WriteLine($"Chunk Blockdata Length: {chunk.BlockData.Length}");
-            UserData.DeleteFile(worldName);
+            //Console.WriteLine($"Chunk Blockdata Length: {chunk.BlockData.Length}");
+            //UserData.DeleteFile(worldName);
             using (MemoryStream ms = new())
             {
-                ms.Write(BitConverter.GetBytes(chunk.ID), 0, 8);
+                ms.Write(BitConverter.GetBytes(chunk.Center.X), 0, 4);
+                ms.Write(BitConverter.GetBytes(chunk.Center.Y), 0, 4);
+                ms.Write(BitConverter.GetBytes(chunk.Center.Z), 0, 4);
+                ms.Write(BitConverter.GetBytes(chunk.ID), 0, 4);
                 chunk.BlockData.ToList().ForEach(new Action<Block>((Block p) =>
                 {
                     ms.Write(BitConverter.GetBytes(p.Data.Item1), 0, 4);
@@ -56,20 +60,24 @@ namespace ConsoleApp1.World
 
         public Chunk GetChunk(int ID)
         {
-            return chunkList[ID];
+            return ChunkList[ID];
         }
 
         public readonly struct Chunk(Vector3 center)
         {
-            public readonly UInt64 ID = chunkIndex++;
+            public readonly uint ID = chunkIndex++;
             public readonly Block[] BlockData { get; } = new Block[chunkSize.X * chunkSize.Y * chunkSize.Z];
             public readonly Vector3 Center { get; } = center;
 
             public (float, float, float)[] GetBlockVertices()
             {
                 Console.WriteLine("Obtaining Block Vertices");
-                Vector3 centerOffset = new(1 + 1 * center.X, 1 + 1 * center.Y, 1 + 1 * center.Z);
-                (float, float, float)[] blocks = BlockData.Select(p => (p.Position.Item1 * centerOffset.X, p.Position.Item2 * centerOffset.Y, p.Position.Item3 * centerOffset.Z)).ToArray();
+                Vector3 centerOffset = new( 1 * Center.X,  1 * Center.Y,  1 * Center.Z);
+                (float, float, float)[] blocks = BlockData.Select(p => (
+                    p.Position.Item1 + centerOffset.X,
+                    p.Position.Item2 + centerOffset.Y,
+                    p.Position.Item3 + centerOffset.Z)
+                ).ToArray();
                 return blocks;
             }
         }

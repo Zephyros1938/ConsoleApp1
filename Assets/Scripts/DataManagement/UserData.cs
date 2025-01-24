@@ -39,7 +39,7 @@ namespace ConsoleApp1.DataManagement
         public static void AppendToFile(string path, byte[] buffer)
         {
             //FileStream filePath = File.Open(GetWorldFileLocation(path), FileMode.Append, FileAccess.Write, FileShare.Write);
-            using (FileStream fileStream = new(GetWorldFileLocation(path), FileMode.Create, FileAccess.Write))
+            using (FileStream fileStream = new(GetWorldFileLocation(path), FileMode.Append, FileAccess.Write))
             using (BinaryWriter writer = new BinaryWriter(fileStream))
             {
                 writer.Write(buffer);

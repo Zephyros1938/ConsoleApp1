@@ -64,7 +64,7 @@ namespace ConsoleApp1.World
         {
             // Precompute sizes to avoid resizing arrays
             int vertexCount = blocks.Length * BlockConstants.Faces.Length * 3; // 3 vertices per face triangle
-            int texCoordCount = vertexCount * 2; // 2 floats per tex coord (x, y)
+            int texCoordCount = vertexCount; // 2 floats per tex coord (x, y)
 
             // Allocate arrays
             float[] vertices = new float[vertexCount * 3]; // 3 floats per vertex (x, y, z)

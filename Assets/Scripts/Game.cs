@@ -20,10 +20,14 @@ namespace ConsoleApp1
 
         public readonly Camera camera = new(new(0.0f, 0.0f, 0.0f));
         List<ShaderProgram> ShaderProgramList = [];
-        private static readonly Thread _WorldThread = new(new ThreadStart(WorldGeneration));
+        private static readonly Thread _WorldThreadGeneration = new(new ThreadStart(WorldGeneration));
         private static readonly Thread _WorldThreadSaving = new(new ThreadStart(WorldSaving));
+        private static readonly Thread _WorldThreadBlockProcessing = new(new ThreadStart(WorldLoadBlockData));
 
         private static readonly World.World world = new("test.wld");
+
+        private static (float, float, float)[] BlockVertices;
+        private static (float[], float[]) blockData;
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
@@ -104,16 +108,30 @@ namespace ConsoleApp1
 
         static void WorldGeneration()
         {
-            for(int x = -2; x < 2; x++){
-                for(int z = -2; z < 2; z++){
-                    world.Generate(((float)x,0f,(float)z));
+            Vector2i worldDimensions = (world.worldSize.X / 2, world.worldSize.Y / 2);
+            for (int y = 0-worldDimensions.Y; y < worldDimensions.Y; y++)
+            {
+                for (int x = 0-worldDimensions.X; x < worldDimensions.X; x++)
+                {
+                    for (int z = 0-worldDimensions.X; z < worldDimensions.X; z++)
+                    {
+                        world.Generate(((float)x, (float)y, (float)z));
+                    }
                 }
             }
+            Console.WriteLine($"World ChunkList Length: {world.ChunkList.Count}");
         }
 
         static void WorldSaving()
         {
-            world.chunkList.ToList().ForEach(new Action<World.World.Chunk>(world.SaveChunkToFile));
+            Console.WriteLine($"Saving World...");
+            world.ChunkList.ToList().ForEach(new Action<World.World.Chunk>(world.SaveChunkToFile));
+        }
+
+        static void WorldLoadBlockData()
+        {
+            BlockVertices = world.GetChunk(6).GetBlockVertices();
+            blockData = BlockUtilities.GenerateBlockData(BlockVertices); 
         }
 
         protected override void OnLoad() // Load graphics here
@@ -122,7 +140,11 @@ namespace ConsoleApp1
 
             Title += ": OpenGL Version: " + GL.GetString(StringName.Version);
 
-            _WorldThread.Start();
+            _WorldThreadGeneration.Start();
+            _WorldThreadGeneration.Join();
+            _WorldThreadSaving.Start();
+            _WorldThreadBlockProcessing.Start();
+            _WorldThreadBlockProcessing.Join();
 
             camera.SetProjection(45.0f, (float)width / height);
 
@@ -141,12 +163,6 @@ namespace ConsoleApp1
             shaderProgram.AddTexture(new("Assets/Images/normals_tr.png", TextureUnit.Texture5), 5, "transparentNormal");
 
             shaderProgram.Bind();
-
-            _WorldThread.Join();
-            _WorldThreadSaving.Start();
-
-            (float, float, float)[] BlockVertices = world.GetChunk(0).GetBlockVertices();
-            (float[], float[]) blockData = BlockUtilities.GenerateBlockData(BlockVertices);
 
             // Vertices
             shaderProgram.SetArrays(blockData.Item1, "vertices");
@@ -212,7 +228,9 @@ namespace ConsoleApp1
             {
                 s.Dispose();
             }
-            _WorldThread.Join();
+            _WorldThreadGeneration.Join();
+            _WorldThreadSaving.Join();
+            _WorldThreadBlockProcessing.Join();
 
             // Code goes here
         }

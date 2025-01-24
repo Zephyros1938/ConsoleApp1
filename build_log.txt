@@ -1,13 +1,13 @@
 MSBuild version 17.8.5+b5265ef37 for .NET
   Determining projects to restore...
   All projects are up-to-date for restore.
-/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/World/World.cs(66,55): warning CS9124: Parameter 'Vector3 center' is captured into the state of the enclosing type and its value is also used to initialize a field, property, or event.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
+/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(29,48): warning CS8618: Non-nullable field 'BlockVertices' must contain a non-null value when exiting constructor.nConsider declaring the field as nullable.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
   ConsoleApp1 -> /home/zephyros/Coding/CS/ConsoleApp1/bin/Debug/net8.0/ConsoleApp1.dll
 
 Build succeeded.
 
-/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/World/World.cs(66,55): warning CS9124: Parameter 'Vector3 center' is captured into the state of the enclosing type and its value is also used to initialize a field, property, or event.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
+/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(29,48): warning CS8618: Non-nullable field 'BlockVertices' must contain a non-null value when exiting constructor.nConsider declaring the field as nullable.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
     1 Warning(s)
     0 Error(s)
 
-Time Elapsed 00:00:05.42
+Time Elapsed 00:00:05.37
