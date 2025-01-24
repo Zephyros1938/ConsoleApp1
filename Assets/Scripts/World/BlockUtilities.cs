@@ -6,109 +6,112 @@ namespace ConsoleApp1.World
     {
 
 
-        public static readonly float cubeSize = 0.5f;
-        public static readonly Vector3[] offsets =
-        [
-            new( 1.0f,  1.0f,  1.0f), //+++ 0
-            new( 1.0f,  1.0f, -1.0f), //++- 1
-            new( 1.0f, -1.0f,  1.0f), //+-+ 2
-            new( 1.0f, -1.0f, -1.0f), //+-- 3
-            new(-1.0f,  1.0f,  1.0f), //-++ 4
-            new(-1.0f,  1.0f, -1.0f), //-+- 5
-            new(-1.0f, -1.0f,  1.0f), //--+ 6
-            new(-1.0f, -1.0f, -1.0f)  //--- 7
-        ];
+        public const float CubeSize = 0.5f;
+
+        // Cube vertex offsets
+        public static readonly Vector3[] Offsets = new[]
+        {
+            new Vector3( 1.0f,  1.0f,  1.0f),
+            new Vector3( 1.0f,  1.0f, -1.0f),
+            new Vector3( 1.0f, -1.0f,  1.0f),
+            new Vector3( 1.0f, -1.0f, -1.0f),
+            new Vector3(-1.0f,  1.0f,  1.0f),
+            new Vector3(-1.0f,  1.0f, -1.0f),
+            new Vector3(-1.0f, -1.0f,  1.0f),
+            new Vector3(-1.0f, -1.0f, -1.0f),
+        };
 
         // Texture coordinates
-        public static readonly Vector2[] texCoords =
-        [
-            new(1.0f, 1.0f), //++ 0
-            new(1.0f, 0.0f), //+- 1
-            new(0.0f, 0.0f), //-- 2
-            new(0.0f, 1.0f)  //-+ 3
-        ];
+        public static readonly Vector2[] TexCoords = new[]
+        {
+            new Vector2(1.0f, 1.0f),
+            new Vector2(1.0f, 0.0f),
+            new Vector2(0.0f, 0.0f),
+            new Vector2(0.0f, 1.0f),
+        };
 
-        // Face offset indexes
-        public static readonly Matrix2x3[] faceOffsetIndexes =
-        [
+        // Face offset indices and texture indices
+        public static readonly (int[] OffsetIndices, int[] TexCoordIndices)[] Faces = new[]
+        {
             // Top face
-            new(0, 1, 4, 0, 1, 3),
-            new(1, 5, 4, 1, 2, 3),
-            
+            (new[] { 0, 1, 4 }, new[] { 0, 1, 3 }),
+            (new[] { 1, 5, 4 }, new[] { 1, 2, 3 }),
+
             // Bottom face
-            new(2, 6, 3, 0, 3, 1),
-            new(6, 7, 3, 3, 2, 1),
+            (new[] { 2, 6, 3 }, new[] { 0, 3, 1 }),
+            (new[] { 6, 7, 3 }, new[] { 3, 2, 1 }),
 
             // Front face
-            new(0, 2, 1, 0, 1, 3),
-            new(2, 3, 1, 1, 2, 3),
+            (new[] { 0, 2, 1 }, new[] { 0, 1, 3 }),
+            (new[] { 2, 3, 1 }, new[] { 1, 2, 3 }),
 
             // Back face
-            new(4, 5, 6, 0, 3, 1),
-            new(5, 7, 6, 3, 2, 1),
+            (new[] { 4, 5, 6 }, new[] { 0, 3, 1 }),
+            (new[] { 5, 7, 6 }, new[] { 3, 2, 1 }),
 
             // Right face
-            new(0, 4, 2, 0, 1, 3),
-            new(4, 6, 2, 1, 2, 3),
+            (new[] { 0, 4, 2 }, new[] { 0, 1, 3 }),
+            (new[] { 4, 6, 2 }, new[] { 1, 2, 3 }),
 
             // Left face
-            new(1, 3, 5, 0, 3, 1),
-            new(3, 7, 5, 3, 2, 1)
-        ];
+            (new[] { 1, 3, 5 }, new[] { 0, 3, 1 }),
+            (new[] { 3, 7, 5 }, new[] { 3, 2, 1 }),
+        };
     }
     public class BlockUtilities
     {
-        public static Vector3[] BlockCubeTransform(Vector3[] blocks)
+        public static (float[] Vertices, float[] TexCoords) GenerateBlockData((float, float, float)[] blocks)
         {
-            List<Vector3> vectors = [];
-            foreach (Vector3 block in blocks)
+            // Precompute sizes to avoid resizing arrays
+            int vertexCount = blocks.Length * BlockConstants.Faces.Length * 3; // 3 vertices per face triangle
+            int texCoordCount = vertexCount * 2; // 2 floats per tex coord (x, y)
+
+            // Allocate arrays
+            float[] vertices = new float[vertexCount * 3]; // 3 floats per vertex (x, y, z)
+            float[] texCoords = new float[texCoordCount * 2]; // 2 floats per texture coord (u, v)
+
+            int vertexIndex = 0;
+            int texCoordIndex = 0;
+
+            foreach (var block in blocks)
             {
-                foreach (Matrix2x3 facedata in BlockConstants.faceOffsetIndexes)
+                foreach (var (offsetIndices, texCoordIndices) in BlockConstants.Faces)
                 {
-                    Vector3i offset = new((int)facedata[0,0], (int)facedata[0,1], (int)facedata[0,2]);
-                    for (int j = 0; j < 3; j++)
+                    if (offsetIndices.Length != 3 || texCoordIndices.Length != 3)
                     {
-                        vectors.Add(block + BlockConstants.offsets[offset[j]]);
+                        throw new InvalidOperationException("Each face must have exactly 3 offset indices and 3 texture coordinate indices.");
+                    }
+
+                    for (int i = 0; i < 3; i++) // Process each vertex of the triangle
+                    {
+                        // Validate offset indices
+                        if (offsetIndices[i] < 0 || offsetIndices[i] >= BlockConstants.Offsets.Length)
+                        {
+                            throw new IndexOutOfRangeException($"Offset index {offsetIndices[i]} is out of range.");
+                        }
+
+                        // Add vertex coordinates
+                        Vector3 vertex = block + BlockConstants.Offsets[offsetIndices[i]] * BlockConstants.CubeSize;
+                        vertices[vertexIndex++] = vertex.X;
+                        vertices[vertexIndex++] = vertex.Y;
+                        vertices[vertexIndex++] = vertex.Z;
+
+                        // Validate texture coordinate indices
+                        if (texCoordIndices[i] < 0 || texCoordIndices[i] >= BlockConstants.TexCoords.Length)
+                        {
+                            throw new IndexOutOfRangeException($"Texture coordinate index {texCoordIndices[i]} is out of range.");
+                        }
+
+                        // Add texture coordinates
+                        Vector2 texCoord = BlockConstants.TexCoords[texCoordIndices[i]];
+                        texCoords[texCoordIndex++] = texCoord.X;
+                        texCoords[texCoordIndex++] = texCoord.Y;
                     }
                 }
             }
-            return [.. vectors];
+
+            return (vertices, texCoords);
         }
 
-        public static Vector2[] BlockCubeTexCoord(Vector3[] blocks)
-        {
-            List<Vector2> TexCoords = [];
-            foreach (Vector3 block in blocks)
-            {
-                foreach (Matrix2x3 facedata in BlockConstants.faceOffsetIndexes)
-                {
-                    Vector3i texCoordIndex = new((int)facedata[1,0], (int)facedata[1,1], (int)facedata[1,2]);
-                    for (int j = 0; j < 3; j++)
-                    {
-                        TexCoords.Add(BlockConstants.texCoords[texCoordIndex[j]]);
-                    }
-                }
-            }
-            return [.. TexCoords];
-        }
-
-        public static (Vector3[], Vector2[]) BlockCube(Vector3[] blocks)
-        {
-            Console.WriteLine("Getting Block Transformations");
-            (List<Vector3>, List<Vector2>) data = ([], []);
-            for(int k = 0; k < blocks.Length; k++) {
-                foreach (Matrix2x3 facedata in BlockConstants.faceOffsetIndexes)
-                {
-                    Vector3i offset = new((int)facedata[0,0], (int)facedata[0,1], (int)facedata[0,2]);
-                    Vector3i texCoordIndex = new((int)facedata[1,0], (int)facedata[1,1], (int)facedata[1,2]);
-                    for (int j = 0; j < 3; j++)
-                    {
-                        data.Item1.Add(blocks[k] + BlockConstants.offsets[offset[j]] * BlockConstants.cubeSize);
-                        data.Item2.Add(BlockConstants.texCoords[texCoordIndex[j]]);
-                    }
-                }
-            }
-            return ([.. data.Item1], [.. data.Item2]);
-        }
     }
 }

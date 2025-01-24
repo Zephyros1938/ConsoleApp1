@@ -12,8 +12,8 @@ namespace ConsoleApp1.Shaders
 
         public Shader(string vertexPath, string fragmentPath, string? geometryPath = null)
         {
-            string VertexShaderSource = FileUtils.LoadFile(vertexPath);
-            string FragmentShaderSource = FileUtils.LoadFile(fragmentPath);
+            string VertexShaderSource = DataManagement.FileUtils.LoadFile(vertexPath);
+            string FragmentShaderSource = DataManagement.FileUtils.LoadFile(fragmentPath);
 
             int VertexShader = GL.CreateShader(ShaderType.VertexShader);
             GL.ShaderSource(VertexShader, VertexShaderSource);
@@ -38,7 +38,7 @@ namespace ConsoleApp1.Shaders
             int GeometryShader = 0;
             if (geometryPath != null)
             {
-                string GeometryShaderSource = FileUtils.LoadFile(geometryPath);
+                string GeometryShaderSource = DataManagement.FileUtils.LoadFile(geometryPath);
                 GeometryShader = GL.CreateShader(ShaderType.GeometryShader);
                 GL.ShaderSource(GeometryShader, GeometryShaderSource);
 

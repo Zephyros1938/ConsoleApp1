@@ -3,6 +3,8 @@ clear
 
 buildLog=`dotnet build`
 
-echo $buildLog > build_log.txt
+echo -e "${buildLog//. /.\n}" > build_log.txt
+
+cat build_log.txt
 
 dotnet run /bin/Debug/net8.0/ConsoleApp1

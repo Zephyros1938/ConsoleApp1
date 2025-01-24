@@ -7,6 +7,7 @@ using ConsoleApp1.Shaders;
 using ConsoleApp1.Viewing;
 using ConsoleApp1.World.Tiles;
 using ConsoleApp1.World;
+using ConsoleApp1.DataManagement;
 
 namespace ConsoleApp1
 {
@@ -19,9 +20,10 @@ namespace ConsoleApp1
 
         public readonly Camera camera = new(new(0.0f, 0.0f, 0.0f));
         List<ShaderProgram> ShaderProgramList = [];
-        private readonly Thread _WorldThread = new(new ThreadStart(WorldGeneration));
+        private static readonly Thread _WorldThread = new(new ThreadStart(WorldGeneration));
+        private static readonly Thread _WorldThreadSaving = new(new ThreadStart(WorldSaving));
 
-        static World.World world = new();
+        private static readonly World.World world = new("test.wld");
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
@@ -94,7 +96,7 @@ namespace ConsoleApp1
                 CursorState = cameraControl == true ? CursorState = CursorState.Grabbed : CursorState = CursorState.Normal;
             }
 
-            if(input.IsKeyPressed(Keys.R))
+            if (input.IsKeyPressed(Keys.R))
             {
                 ShaderProgramList[0].ToggleDebug();
             }
@@ -102,7 +104,16 @@ namespace ConsoleApp1
 
         static void WorldGeneration()
         {
-            world.Generate();
+            for(int x = -2; x < 2; x++){
+                for(int z = -2; z < 2; z++){
+                    world.Generate(((float)x,0f,(float)z));
+                }
+            }
+        }
+
+        static void WorldSaving()
+        {
+            world.chunkList.ToList().ForEach(new Action<World.World.Chunk>(world.SaveChunkToFile));
         }
 
         protected override void OnLoad() // Load graphics here
@@ -132,15 +143,16 @@ namespace ConsoleApp1
             shaderProgram.Bind();
 
             _WorldThread.Join();
+            _WorldThreadSaving.Start();
 
-            Vector3[] BlockVertices = world.GetChunk(0).GetBlockVertices();
-            (Vector3[], Vector2[]) blockData = BlockUtilities.BlockCube(BlockVertices);
+            (float, float, float)[] BlockVertices = world.GetChunk(0).GetBlockVertices();
+            (float[], float[]) blockData = BlockUtilities.GenerateBlockData(BlockVertices);
 
             // Vertices
             shaderProgram.SetArrays(blockData.Item1, "vertices");
 
             // Colors
-            shaderProgram.SetArrayBufferVec2(1, 2, VertexAttribPointerType.Float, false, 2, 0, blockData.Item2, "texCoords");
+            shaderProgram.SetArrayBufferF(1, 2, VertexAttribPointerType.Float, false, 2, 0, blockData.Item2, "texCoords");
 
             // Block Data
             shaderProgram.SetArrayBufferF(2, 1, VertexAttribPointerType.Float, false, 1, 0, Testing.Testing2.blockData, "blockData");
