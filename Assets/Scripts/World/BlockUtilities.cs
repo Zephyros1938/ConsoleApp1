@@ -60,7 +60,7 @@ namespace ConsoleApp1.World
     }
     public class BlockUtilities
     {
-        public static (float[] Vertices, float[] TexCoords) GenerateBlockData((float, float, float)[] blocks)
+        public static (float[] Vertices, float[] TexCoords) GenerateBlockData((float, float, float, uint)[] blocks)
         {
             // Precompute sizes to avoid resizing arrays
             int vertexCount = blocks.Length * BlockConstants.Faces.Length * 3; // 3 vertices per face triangle
@@ -91,7 +91,7 @@ namespace ConsoleApp1.World
                         }
 
                         // Add vertex coordinates
-                        Vector3 vertex = block + BlockConstants.Offsets[offsetIndices[i]] * BlockConstants.CubeSize;
+                        Vector3 vertex = (block.Item1, block.Item2, block.Item3) + BlockConstants.Offsets[offsetIndices[i]] * BlockConstants.CubeSize;
                         vertices[vertexIndex++] = vertex.X;
                         vertices[vertexIndex++] = vertex.Y;
                         vertices[vertexIndex++] = vertex.Z;

@@ -16,7 +16,7 @@ namespace ConsoleApp1.World
         public World(string worldName)
         {
             this.worldName = worldName;
-            UserData.DeleteFile(worldName);
+            UserData.WorldManagement.DeleteFile(worldName);
             Console.WriteLine($"Worlds Path: {UserData._WorldsPath}");
         }
 
@@ -41,34 +41,32 @@ namespace ConsoleApp1.World
 
         public void SaveChunkToFile(Chunk chunk)
         {
-            using (MemoryStream ms = new())
+            using MemoryStream ms = new();
+            Span<byte> buffer = stackalloc byte[4];
+            // Write Chunk Header
+            BitConverter.TryWriteBytes(buffer, chunk.Center.X);
+            ms.Write(buffer);
+            BitConverter.TryWriteBytes(buffer, chunk.Center.Y);
+            ms.Write(buffer);
+            BitConverter.TryWriteBytes(buffer, chunk.Center.Z);
+            ms.Write(buffer);
+            BitConverter.TryWriteBytes(buffer, chunk.ID);
+            ms.Write(buffer);
+
+            // Write Block Data
+            foreach (var block in chunk.BlockData)
             {
-                Span<byte> buffer = stackalloc byte[4];
-                // Write Chunk Header
-                BitConverter.TryWriteBytes(buffer, chunk.Center.X);
+                BitConverter.TryWriteBytes(buffer, block.X);
                 ms.Write(buffer);
-                BitConverter.TryWriteBytes(buffer, chunk.Center.Y);
+                BitConverter.TryWriteBytes(buffer, block.Y);
                 ms.Write(buffer);
-                BitConverter.TryWriteBytes(buffer, chunk.Center.Z);
+                BitConverter.TryWriteBytes(buffer, block.Z);
                 ms.Write(buffer);
-                BitConverter.TryWriteBytes(buffer, chunk.ID);
+                BitConverter.TryWriteBytes(buffer, block.ID);
                 ms.Write(buffer);
-
-                // Write Block Data
-                foreach (var block in chunk.BlockData)
-                {
-                    BitConverter.TryWriteBytes(buffer, block.X);
-                    ms.Write(buffer);
-                    BitConverter.TryWriteBytes(buffer, block.Y);
-                    ms.Write(buffer);
-                    BitConverter.TryWriteBytes(buffer, block.Z);
-                    ms.Write(buffer);
-                    BitConverter.TryWriteBytes(buffer, block.ID);
-                    ms.Write(buffer);
-                }
-
-                UserData.AppendToFile(worldName, ms.ToArray());
             }
+
+            UserData.WorldManagement.AppendToFile(worldName, ms.ToArray());
         }
 
         public Chunk GetChunk(int ID)
@@ -86,7 +84,7 @@ namespace ConsoleApp1.World
             public (float, float, float)[] GetBlockVertices()
             {
                 //Console.WriteLine("Obtaining Block Vertices");
-                List<(float, float, float)> vertices = new();
+                List<(float, float, float)> vertices = [];
 
                 for (int y = 0; y < chunkSize.Y; y++)
                 {
@@ -97,12 +95,12 @@ namespace ConsoleApp1.World
                             if (!IsBlockVisible(x, y, z))
                             {
                                 var block = BlockData[x + chunkSize.X * (y + chunkSize.Y * z)];
-                                vertices.Add((block.X,block.Y,block.Z));
+                                vertices.Add((block.X, block.Y, block.Z));
                             }
                         }
                     }
                 }
-                return vertices.ToArray();
+                return [.. vertices];
             }
 
 
@@ -134,5 +132,68 @@ namespace ConsoleApp1.World
             public float Z { get; } = Z;
             public uint ID { get; } = ID;
         }
+    }
+
+    public class BiomeManagement
+    {
+        public float caveLevel = -10f;
+        public float skyLevel = 10f;
+
+        public Biome Caves = new Biome(
+            [
+                (Tiles.TileIDs.rock, 1f)
+            ],
+            "Caves"
+        );
+
+        public Biome Grassland = new Biome(
+            [
+                (Tiles.TileIDs.dirt, 10f),
+                (Tiles.TileIDs.sandSoft, 1f)
+            ],
+            "Grasslands"
+        );
+
+        public struct Biome
+        {
+            public (uint, float)[] internalTileWeights;
+            public string Name;
+            private readonly Random rand;
+
+            public Biome((uint, float)[] TileWeights, string Name)
+            {
+                this.Name = Name;
+                rand = new Random();
+
+                float totalWeight = 0f;
+                foreach (var weight in TileWeights)
+                {
+                    totalWeight += weight.Item2;
+                }
+
+                internalTileWeights = new (uint, float)[TileWeights.Length];
+
+                float cumulativeWeight = 0;
+
+                for (int i = 0; i < TileWeights.Length; i++)
+                {
+                    cumulativeWeight += TileWeights[i].Item2 / totalWeight;
+                    internalTileWeights[i] = (TileWeights[i].Item1, cumulativeWeight); // Store cumulative weights
+                }
+            }
+
+            public readonly uint GetRandomBlock() 
+            {
+                double randNumber = rand.NextDouble();
+                foreach(var tileWeight in internalTileWeights)
+                {
+                    if(randNumber<=tileWeight.Item2)
+                    {
+                        return tileWeight.Item1;
+                    }
+                }
+                return 0;
+            }
+        };
     }
 }
