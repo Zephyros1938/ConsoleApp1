@@ -111,6 +111,7 @@ namespace ConsoleApp1
             Vector2i worldDimensions = (world.worldSize.X / 2, world.worldSize.Y / 2);
             for (int y = 0-worldDimensions.Y; y < worldDimensions.Y; y++)
             {
+                Console.WriteLine($"Current Chunk Y-Level: {y}");
                 for (int x = 0-worldDimensions.X; x < worldDimensions.X; x++)
                 {
                     for (int z = 0-worldDimensions.X; z < worldDimensions.X; z++)
@@ -169,6 +170,7 @@ namespace ConsoleApp1
 
             // Colors
             shaderProgram.SetArrayBufferF(1, 2, VertexAttribPointerType.Float, false, 2, 0, blockData.Item2, "texCoords");
+            blockData = default;
 
             // Block Data
             shaderProgram.SetArrayBufferF(2, 1, VertexAttribPointerType.Float, false, 1, 0, Testing.Testing2.blockData, "blockData");

@@ -4,7 +4,9 @@ namespace ConsoleApp1.DataManagement
     {
         public static readonly string _HomeEnv = Environment.OSVersion.Platform == PlatformID.Unix ? "HOME" : "HOMEPATH";
         public static readonly string _HomePath = Environment.GetEnvironmentVariable(_HomeEnv) ?? throw new NullReferenceException($"Could not find environment variable for {_HomeEnv}. Is it properly set?");
-        public static readonly string _LocalPath = Path.Combine(_HomePath, ".local/share") ?? throw new FileNotFoundException($"Could not find .local/share folder at {Path.GetFullPath(_HomePath)}. Maybe it doesnt exist?");
+        public static readonly string _LocalPath = Environment.OSVersion.Platform == PlatformID.Unix
+        ? Path.Combine(_HomePath, ".local/share")
+        : Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         public static readonly string _PublisherPath = new Func<string>(() =>
             {
                 if (!Directory.Exists(Path.Combine(_LocalPath, "Zephyros1938")))

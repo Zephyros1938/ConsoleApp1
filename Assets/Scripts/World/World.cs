@@ -21,10 +21,8 @@ namespace ConsoleApp1.World
         {
             Chunk currentChunk = new(location);
             uint currentBlock = 0x00;
-            Console.WriteLine($"Current Chunk: {currentChunk.Center}");
             for (int y = 0; y < chunkSize.Y; y++)
             {
-                Console.WriteLine($"\tGenerating Y-Level {y}");
                 for (int x = 0; x < chunkSize.X; x++)
                 {
                     for (int z = 0; z < chunkSize.Z; z++)
@@ -73,11 +71,11 @@ namespace ConsoleApp1.World
             {
                 Console.WriteLine("Obtaining Block Vertices");
                 Vector3 centerOffset = new( 1 * Center.X,  1 * Center.Y,  1 * Center.Z);
-                (float, float, float)[] blocks = BlockData.Select(p => (
+                (float, float, float)[] blocks = [.. BlockData.Select(p => (
                     p.Position.Item1 + centerOffset.X,
                     p.Position.Item2 + centerOffset.Y,
                     p.Position.Item3 + centerOffset.Z)
-                ).ToArray();
+                )];
                 return blocks;
             }
         }
