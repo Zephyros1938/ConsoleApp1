@@ -1,3 +1,4 @@
+using ConsoleApp1.Shaders;
 using ConsoleApp1.Utilities;
 using OpenTK.Mathematics;
 
@@ -5,6 +6,7 @@ namespace ConsoleApp1.Viewing
 {
     public class Camera
     {
+
         float speed = 1.5f;
         float sensitivity = 0.1f;
 
@@ -16,7 +18,8 @@ namespace ConsoleApp1.Viewing
 
         Vector3 cameraTarget = Vector3.Zero;
 
-        Vector3 position = new(0.0f, 0.0f, 3.0f);
+        public Vector3 position
+        = new(0.0f, 0.0f, 3.0f);
         Vector3 front = new(0.0f, 0.0f, -1.0f);
         Vector3 up = Vector3.UnitY;
 
@@ -118,7 +121,7 @@ namespace ConsoleApp1.Viewing
         {
             Vector3 dir = (point - position).Normalized();
             float angle = (float)Math.Acos(Vector3.Dot(front, dir));
-            return angle < ((FOV+5f)/2f);
+            return angle < ((FOV + 5f) / 2f);
         }
     }
 }

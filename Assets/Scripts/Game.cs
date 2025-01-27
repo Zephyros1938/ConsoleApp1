@@ -5,9 +5,8 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using ConsoleApp1.Shaders;
 using ConsoleApp1.Viewing;
-using ConsoleApp1.World.Tiles;
 using ConsoleApp1.World;
-using ConsoleApp1.DataManagement;
+using System.Diagnostics;
 
 namespace ConsoleApp1
 {
@@ -25,9 +24,7 @@ namespace ConsoleApp1
         private static readonly Thread _WorldThreadBlockProcessing = new(new ThreadStart(WorldLoadBlockData));
 
         private static readonly World.World world = new("test.wld");
-
-        private static (float, float, float)[] BlockVertices;
-        private static (float[], float[]) blockData;
+        private static (float[], float[]) blockData = new();
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
@@ -104,35 +101,75 @@ namespace ConsoleApp1
             {
                 ShaderProgramList[0].ToggleDebug();
             }
+
+            if (input.IsKeyPressed(Keys.Q))
+            {
+                ShaderProgramList[0].SetDrawMode(PrimitiveType.Lines);
+            }
+
+            if (input.IsKeyPressed(Keys.E))
+            {
+                ShaderProgramList[0].SetDrawMode(PrimitiveType.Triangles);
+            }
         }
 
         static void WorldGeneration()
         {
+            Console.WriteLine("Starting World Generation...");
             Vector2i worldDimensions = (world.worldSize.X / 2, world.worldSize.Y / 2);
-            for (int y = 0-worldDimensions.Y; y < worldDimensions.Y; y++)
+
+            int minY = -worldDimensions.Y;
+            int maxY = worldDimensions.Y;
+            int minX = -worldDimensions.X;
+            int maxX = worldDimensions.X;
+
+            Parallel.For(minY, maxY, y =>
             {
-                Console.WriteLine($"Current Chunk Y-Level: {y}");
-                for (int x = 0-worldDimensions.X; x < worldDimensions.X; x++)
+                Console.WriteLine($"Generating Y-Level {y}...");
+                for (int x = minX; x < maxX; x++)
                 {
-                    for (int z = 0-worldDimensions.X; z < worldDimensions.X; z++)
+                    for (int z = minX; z < maxX; z++)
                     {
-                        world.Generate(((float)x, (float)y, (float)z));
+                        world.Generate((x, y, z));
                     }
                 }
-            }
+                Console.WriteLine($"Finished Generating Y-Level {y}");
+            });
+
+
             Console.WriteLine($"World ChunkList Length: {world.ChunkList.Count}");
         }
 
         static void WorldSaving()
         {
-            Console.WriteLine($"Saving World...");
-            world.ChunkList.ToList().ForEach(new Action<World.World.Chunk>(world.SaveChunkToFile));
+            Console.WriteLine("Saving World...");
+            foreach (var chunk in world.ChunkList)
+            {
+                world.SaveChunkToFile(chunk);
+            }
         }
+
 
         static void WorldLoadBlockData()
         {
-            BlockVertices = world.GetChunk(6).GetBlockVertices();
-            blockData = BlockUtilities.GenerateBlockData(BlockVertices); 
+            Console.WriteLine("Loading Block Data...");
+            Stopwatch s = Stopwatch.StartNew();
+
+            var (Vertices, TexCoords) = BlockUtilities.GenerateBlockData(world.GetChunk(0).GetBlockVertices());
+            List<float> allData1 = new(Vertices);
+            List<float> allData2 = new(TexCoords);
+
+            for (int i = 1; i < world.ChunkList.Count; i++) // Start at chunk 2.
+            {
+                (float[], float[]) data = BlockUtilities.GenerateBlockData(world.GetChunk(i).GetBlockVertices());
+                allData1.AddRange(data.Item1);
+                allData2.AddRange(data.Item2);
+            }
+
+            blockData = (allData1.ToArray(), allData2.ToArray());
+
+            s.Stop();
+            Console.WriteLine($"Took {s.ElapsedMilliseconds / 1000.0} seconds to calculate block vertices");
         }
 
         protected override void OnLoad() // Load graphics here
