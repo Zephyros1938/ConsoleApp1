@@ -119,7 +119,7 @@ namespace ConsoleApp1
 
             if (input.IsKeyPressed(Keys.Q))
             {
-                if (ShaderProgramList.TryGetValue("VoxelShader.Main", out ShaderProgram vx))
+                if (ShaderProgramList.TryGetValue("VoxelShader.Main", out ShaderProgram vx) && vx != null)
                 {
                     vx.SetDrawMode(PrimitiveType.Lines);
                 }
@@ -127,7 +127,7 @@ namespace ConsoleApp1
 
             if (input.IsKeyPressed(Keys.E))
             {
-                if (ShaderProgramList.TryGetValue("VoxelShader.Main", out ShaderProgram vx))
+                if (ShaderProgramList.TryGetValue("VoxelShader.Main", out ShaderProgram vx) && vx != null)
                 {
                     vx.SetDrawMode(PrimitiveType.Triangles);
                 }
@@ -144,18 +144,18 @@ namespace ConsoleApp1
             int minX = -worldDimensions.X;
             int maxX = worldDimensions.X;
 
-            Parallel.For(minY, maxY, y =>
+            for (int y = minY; y < maxY; y++)
             {
                 Console.WriteLine($"Generating Y-Level {y}...");
-                for (int x = minX; x <= maxX; x++)
+                for (int x = minX; x < maxX; x++)
                 {
-                    for (int z = minX; z <= maxX; z++)
+                    for (int z = minX; z < maxX; z++)
                     {
                         world.Generate((x, y, z));
                     }
                 }
                 Console.WriteLine($"Finished Generating Y-Level {y}");
-            });
+            };
 
 
             Console.WriteLine($"World ChunkList Length: {world.ChunkList.Count}");
@@ -185,15 +185,11 @@ namespace ConsoleApp1
             List<int> allData3 = new();
 
             // Loop through all chunks (including chunk 0)
-
-            foreach (World.World.Chunk c in world.ChunkList)
-            {
-                var (Vertices, TexCoords, TileIDs) = BlockUtilities.GenerateBlockData(c.GetBlockVertices());
-                allData1.AddRange(Vertices);
-                allData2.AddRange(TexCoords);
-                allData3.AddRange(TileIDs);
-
-            }
+            //var (Vertices, TexCoords, TileIDs) = BlockUtilities.GenerateBlockData(c.GetBlockVertices());
+            var (Vertices, TexCoords, TileIDs) = BlockUtilities.GenerateBlockDataChunked([.. world.ChunkList]);
+            allData1.AddRange(Vertices);
+            allData2.AddRange(TexCoords);
+            allData3.AddRange(TileIDs);
 
             blockData = (allData1.ToArray(), allData2.ToArray(), allData3.ToArray());
 
@@ -201,7 +197,7 @@ namespace ConsoleApp1
             Console.WriteLine($"Took {s.ElapsedMilliseconds / 1000.0} seconds to calculate block vertices");
         }
 
-        
+
 
 
         protected override void OnLoad() // Load graphics here
@@ -209,7 +205,7 @@ namespace ConsoleApp1
             base.OnLoad();
 
             Title += ": OpenGL Version: " + GL.GetString(StringName.Version);
-            
+
             _WorldThreadGeneration.Start();
             _WorldThreadGeneration.Join();
             _WorldThreadSaving.Start();
@@ -252,7 +248,7 @@ namespace ConsoleApp1
             GL.DepthFunc(DepthFunction.Less);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-            GL.Enable(EnableCap.CullFace);
+            //GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Texture2D);
 
             CursorState = CursorState.Grabbed;

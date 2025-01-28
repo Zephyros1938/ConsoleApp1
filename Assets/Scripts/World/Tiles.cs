@@ -74,7 +74,7 @@ namespace ConsoleApp1.World.Tiles
         public static readonly int rockOreCryptonite = 41;
         public static readonly int craftingStationPaintingTableTop = 42;
         public static readonly int pumkinFront = 43;
-        public static readonly int pumkinTop = 44;
+        public static readonly int pumkintop = 44;
         public static readonly int pumkinSide = 45;
         public static readonly int bricksForgottenStoneMossy = 46;
         public static readonly int bricksForgottenStoneRune = 47;

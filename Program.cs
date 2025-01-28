@@ -13,8 +13,16 @@ namespace ConsoleApp1
         /// <param name="args"></param>
         public static void Main(string[] args)
         {
-            using (Process p = Process.GetCurrentProcess()){
-                p.PriorityClass = ProcessPriorityClass.High;
+            try
+            {
+                using (Process p = Process.GetCurrentProcess())
+                {
+                    p.PriorityClass = ProcessPriorityClass.High;
+                }
+            }
+            catch (System.Exception)
+            {
+                Console.WriteLine("Could not set system priority to high.");
             }
             using (var game = new Game(Resolutions.Medium_1280x720.X, Resolutions.Medium_1280x720.Y, "ConsoleApp1", GameWindowSettings.Default))
             {

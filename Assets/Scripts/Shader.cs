@@ -281,6 +281,16 @@ namespace ConsoleApp1.Shaders
             GL.EnableVertexAttribArray(index);
         }
 
+        public void SetArrayBufferS(int index, int size, VertexAttribPointerType type, bool normalized, int stride, int offset, short[] data, string name = "UNNAMED")
+        {
+            int ID = GL.GenBuffer();
+            buffers.Add((name, ID));
+            GL.BindBuffer(BufferTarget.ArrayBuffer, ID);
+            GL.BufferData(BufferTarget.ArrayBuffer, data.Length * sizeof(short), data, BufferUsageHint.StaticDraw);
+            GL.VertexAttribPointer(index, size, type, normalized, stride * sizeof(short), offset);
+            GL.EnableVertexAttribArray(index);
+        }
+
         public void AddTexture(Texture texture, int location, string name)
         {
             textures.Add(texture);

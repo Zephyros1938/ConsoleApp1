@@ -21,6 +21,16 @@ namespace ConsoleApp1.World
             new Vector3(-1.0f, -1.0f, -1.0f),
         };
 
+        public static readonly Vector3i[] directions = new Vector3i[]
+        {
+            new Vector3i(0, 1, 0),
+            new Vector3i(0, -1, 0),
+            new Vector3i(1, 0, 0),
+            new Vector3i(-1, 0, 0),
+            new Vector3i(0, 0, 1),
+            new Vector3i(0, 0, -1)
+        };
+
         // Texture coordinates
         public static readonly Vector2[] TexCoords = new[]
         {
@@ -116,6 +126,61 @@ namespace ConsoleApp1.World
             }
 
             return (vertices, texCoords, tileIDs);
+        }
+
+        public static (float[] Vertices, float[] TexCoords, int[] TileIDs) GenerateBlockDataChunked(World.Chunk[] chunks)
+        {
+            // Use dynamic lists to collect data
+            List<float> vertices = new List<float>();
+            List<float> texCoords = new List<float>();
+            List<int> tileIDs = new List<int>();
+
+            foreach (var chunk in chunks)
+            {
+                for (int y = 0; y < World.chunkSize.Y; y++)
+                {
+                    for (int x = 0; x < World.chunkSize.X; x++)
+                    {
+                        for (int z = 0; z < World.chunkSize.Z; z++)
+                        {
+                            Vector3 blockPosition = new Vector3(x, y, z);
+
+                            // Check visibility for each face
+                            for (int faceIndex = 0; faceIndex < BlockConstants.Faces.Length; faceIndex++)
+                            {
+                                var (offsetIndices, texCoordIndices) = BlockConstants.Faces[faceIndex];
+
+                                // Skip face if an adjacent block exists
+                                Vector3i direction = BlockConstants.directions[faceIndex / 2];
+                                if (chunk.HasBlockAt((x, y, z) + direction))
+                                    continue;
+
+                                // Add face vertices and texture coordinates
+                                for (int i = 0; i < 3; i++)
+                                {
+                                    // Add vertex coordinates
+                                    Vector3 vertex = blockPosition + BlockConstants.Offsets[offsetIndices[i]] * BlockConstants.CubeSize;
+                                    vertices.Add(vertex.X);
+                                    vertices.Add(vertex.Z);
+                                    vertices.Add(vertex.Y);
+
+                                    // Add texture coordinates
+                                    Vector2 texCoord = BlockConstants.TexCoords[texCoordIndices[i]];
+                                    texCoords.Add(texCoord.X);
+                                    texCoords.Add(texCoord.Y);
+
+                                    // Add tile ID (for this face)
+                                    int tileID = chunk.BlockData[x + World.chunkSize.X * (y + World.chunkSize.Y * z)].ID;
+                                    tileIDs.Add(tileID);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Convert lists to arrays
+            return (vertices.ToArray(), texCoords.ToArray(), tileIDs.ToArray());
         }
 
     }

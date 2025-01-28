@@ -6,13 +6,13 @@ namespace ConsoleApp1.World
 {
     public class World
     {
-        static Vector3i chunkSize = (25, 25, 25);
-        private static readonly Vector2i _worldSize = (7, 7);
+        public static readonly Vector3i chunkSize = (3, 3, 3);
+        private static readonly Vector2i _worldSize = (3, 3);
         public readonly Vector2i worldSize = (_worldSize.X, _worldSize.Y);
-        public HashSet<Chunk> ChunkList { get; } = new(capacity: _worldSize.X * _worldSize.Y);
-        static readonly int blocksPerChunk = chunkSize.X * chunkSize.Y * chunkSize.Z;
+        public HashSet<Chunk> ChunkList { get; } = new(capacity: _worldSize.X * _worldSize.Y * _worldSize.X);
+        public static readonly int blocksPerChunk = chunkSize.X * chunkSize.Y * chunkSize.Z;
 
-        public static uint chunkIndex = 0;
+        static uint chunkIndex = 0;
         private readonly string worldName;
         public World(string worldName)
         {
@@ -46,11 +46,12 @@ namespace ConsoleApp1.World
                         else
                         {
                             randomBlockID = BiomeManagement.Grassland.GetRandomBlock();
-                            if (randomBlockID == Tiles.TileIDs.dirt && !currentChunk.HasBlockAt(x, y + 1, z))
-                            {
-                                randomBlockID = Tiles.TileIDs.grassTop;
-                            }
+                            // if (randomBlockID == Tiles.TileIDs.dirt && !currentChunk.HasBlockAt(x, y + 1, z))
+                            // {
+                            //     randomBlockID = Tiles.TileIDs.grassTop;
+                            // }
                         }
+                        //randomBlockID = 0;
                         currentChunk.BlockData[currentBlock++] = new(pos.X, pos.Y, pos.Z, randomBlockID);
                     }
                 }
@@ -63,6 +64,8 @@ namespace ConsoleApp1.World
             using MemoryStream ms = new();
             Span<byte> buffer = stackalloc byte[4];
             // Write Chunk Header
+            BitConverter.TryWriteBytes(buffer, 0xFEFEFEFE);
+            ms.Write(buffer);
             BitConverter.TryWriteBytes(buffer, chunk.Center.X);
             ms.Write(buffer);
             BitConverter.TryWriteBytes(buffer, chunk.Center.Y);
@@ -72,16 +75,46 @@ namespace ConsoleApp1.World
             BitConverter.TryWriteBytes(buffer, chunk.ID);
             ms.Write(buffer);
 
+            int PreviousBlock = -0xff;
+            uint PreviousBlockCount = 1;
+
             // Write Block Data
+            //Console.WriteLine("Parsing block data...");
             foreach (var block in chunk.BlockData)
             {
-                BitConverter.TryWriteBytes(buffer, block.X);
+                //Console.WriteLine($"{block.ID} : {PreviousBlock} | {PreviousBlockCount}");
+                //Console.WriteLine(block.ID == PreviousBlock);
+                if (block.ID != PreviousBlock)
+                {
+                    if (PreviousBlock != -0xff)
+                    {
+                        //Console.WriteLine("Call Block Count");
+                        BitConverter.TryWriteBytes(buffer, 0xffffffff);
+                        ms.Write(buffer);
+                        //Console.WriteLine($"Previous Block Count is {PreviousBlockCount}");
+                        BitConverter.TryWriteBytes(buffer, PreviousBlockCount);
+                        ms.Write(buffer);
+                        //Console.WriteLine($"Block ID is {PreviousBlock}");
+                        BitConverter.TryWriteBytes(buffer, PreviousBlock);
+                        ms.Write(buffer);
+                    }
+                    PreviousBlockCount = 1;
+                }
+                else
+                {
+                    PreviousBlockCount++;
+                }
+                PreviousBlock = block.ID;
+            }
+            if (PreviousBlock != -0xff || PreviousBlock != chunk.BlockData.Last().ID)
+            {
+                BitConverter.TryWriteBytes(buffer, 0xffffffff);
                 ms.Write(buffer);
-                BitConverter.TryWriteBytes(buffer, block.Y);
+                //Console.WriteLine($"Previous Block Count is {PreviousBlockCount}");
+                BitConverter.TryWriteBytes(buffer, PreviousBlockCount);
                 ms.Write(buffer);
-                BitConverter.TryWriteBytes(buffer, block.Z);
-                ms.Write(buffer);
-                BitConverter.TryWriteBytes(buffer, block.ID);
+                //Console.WriteLine($"Block ID is {PreviousBlock}");
+                BitConverter.TryWriteBytes(buffer, PreviousBlock);
                 ms.Write(buffer);
             }
 
@@ -117,6 +150,25 @@ namespace ConsoleApp1.World
                 return [.. vertices];
             }
 
+            public (float, float, float, int)[] GetBlockVerticesLossless()
+            {
+                //Console.WriteLine("Obtaining Block Vertices");
+                List<(float, float, float, int)> vertices = [];
+
+                for (int y = 0; y < chunkSize.Y; y++)
+                {
+                    for (int x = 0; x < chunkSize.X; x++)
+                    {
+                        for (int z = 0; z < chunkSize.Z; z++)
+                        {
+                            var block = BlockData[x + chunkSize.X * (y + chunkSize.Y * z)];
+                            vertices.Add((block.X, block.Y, block.Z, block.ID));
+                        }
+                    }
+                }
+                return [.. vertices];
+            }
+
 
             public bool IsBlockVisible(int x, int y, int z)
             {
@@ -130,10 +182,28 @@ namespace ConsoleApp1.World
             {
                 // Check if block is inside chunk bounds
                 if (x < 0 || y < 0 || z < 0 || x >= chunkSize.X || y >= chunkSize.Y || z >= chunkSize.Z)
+                {
+                    //Console.WriteLine($"Attempted to get block at ({x},{y},{z}) which was outside of chunk borders ({chunkSize})");
                     return false;
+                }
 
                 // Check if a block exists at this position
                 int index = x + chunkSize.X * (y + chunkSize.Y * z);
+                //Console.WriteLine($"{index}: {BlockData[index].ID}: {BlockData[index].ID != 0}");
+                return BlockData[index].ID != -1; // Adjust based on how "empty" blocks are defined
+            }
+
+            public bool HasBlockAt(Vector3i loc)
+            {
+                // Check if block is inside chunk bounds
+                if (loc.X < 0 || loc.Y < 0 || loc.Z < 0 || loc.X >= chunkSize.X || loc.Y >= chunkSize.Y || loc.Z >= chunkSize.Z)
+                {
+                    //Console.WriteLine($"Attempted to get block at ({x},{y},{z}) which was outside of chunk borders ({chunkSize})");
+                    return false;
+                }
+
+                // Check if a block exists at this position
+                int index = loc.X + chunkSize.X * (loc.Y + chunkSize.Y * loc.Z);
                 //Console.WriteLine($"{index}: {BlockData[index].ID}: {BlockData[index].ID != 0}");
                 return BlockData[index].ID != -1; // Adjust based on how "empty" blocks are defined
             }
@@ -156,7 +226,10 @@ namespace ConsoleApp1.World
 
         public static Biome Caves = new Biome(
             [
-                (Tiles.TileIDs.rock, 100f)
+                (Tiles.TileIDs.rock, 100f),
+                (Tiles.TileIDs.rockOreCoal, 10f),
+                (Tiles.TileIDs.rockOreIron, 1f),
+                (Tiles.TileIDs.rockOreGold, 0.1f)
             ],
             "Caves"
         );
