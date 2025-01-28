@@ -20,6 +20,7 @@ namespace ConsoleApp1.World.Tiles
     {
         // Nontransparent Blocks
         // Row 0
+        public static readonly int air = -1;
         public static readonly int grassTop = 0;
         public static readonly int grassSide = 1;
         public static readonly int sandSoft = 2;

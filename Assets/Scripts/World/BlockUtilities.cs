@@ -152,12 +152,20 @@ namespace ConsoleApp1.World
 
                                 // Skip face if an adjacent block exists
                                 Vector3i direction = BlockConstants.directions[faceIndex / 2];
+                                //Console.WriteLine($"Direction: {direction}");
+
+                                
                                 if (chunk.HasBlockAt((x, y, z) + direction))
                                     continue;
 
                                 // Add face vertices and texture coordinates
                                 for (int i = 0; i < 3; i++)
                                 {
+
+                                    // Add tile ID (for this face)
+                                    int tileID = chunk.BlockData[x + World.chunkSize.X * (y + World.chunkSize.Y * z)].ID;
+                                    tileIDs.Add(tileID);
+
                                     // Add vertex coordinates
                                     Vector3 vertex = blockPosition + BlockConstants.Offsets[offsetIndices[i]] * BlockConstants.CubeSize;
                                     vertices.Add(vertex.X);
@@ -168,10 +176,6 @@ namespace ConsoleApp1.World
                                     Vector2 texCoord = BlockConstants.TexCoords[texCoordIndices[i]];
                                     texCoords.Add(texCoord.X);
                                     texCoords.Add(texCoord.Y);
-
-                                    // Add tile ID (for this face)
-                                    int tileID = chunk.BlockData[x + World.chunkSize.X * (y + World.chunkSize.Y * z)].ID;
-                                    tileIDs.Add(tileID);
                                 }
                             }
                         }
