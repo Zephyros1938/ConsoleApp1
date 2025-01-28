@@ -1,6 +1,7 @@
 ﻿using OpenTK.Mathematics;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.Common;
+using System.Diagnostics;
 
 namespace ConsoleApp1
 {
@@ -12,6 +13,9 @@ namespace ConsoleApp1
         /// <param name="args"></param>
         public static void Main(string[] args)
         {
+            using (Process p = Process.GetCurrentProcess()){
+                p.PriorityClass = ProcessPriorityClass.High;
+            }
             using (var game = new Game(Resolutions.Medium_1280x720.X, Resolutions.Medium_1280x720.Y, "ConsoleApp1", GameWindowSettings.Default))
             {
                 game.WindowBorder = WindowBorder.Fixed;

@@ -95,20 +95,20 @@ namespace ConsoleApp1.Viewing
         {
             float deltaX = currentPos.X - lastPos.X;
             float deltaY = currentPos.Y - lastPos.Y;
-            this.lastPos = currentPos;
+            lastPos = currentPos;
 
-            this.yaw += deltaX * this.sensitivity;
-            if (this.pitch > CMath.epsilon_90_s)
+            yaw += deltaX * sensitivity;
+            if (pitch > CMath.epsilon_90_s)
             {
-                this.pitch = CMath.epsilon_90_s;
+                pitch = CMath.epsilon_90_s;
             }
-            else if (this.pitch < CMath.epsilon_n90_s)
+            else if (pitch < CMath.epsilon_n90_s)
             {
-                this.pitch = CMath.epsilon_n90_s;
+                pitch = CMath.epsilon_n90_s;
             }
             else
             {
-                this.pitch -= deltaY * this.sensitivity;
+                pitch -= deltaY * sensitivity;
             }
         }
 
@@ -116,6 +116,7 @@ namespace ConsoleApp1.Viewing
         public Matrix4 GetProjectionMatrix() => projection;
         public Vector3 GetPosition() => position;
         public Vector3 GetFront() => front;
+        public float GetSpeed() => speed;
 
         public bool IsBlockInFOV(Vector3 point)
         {

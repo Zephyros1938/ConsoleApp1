@@ -18,13 +18,15 @@ namespace ConsoleApp1
         Matrix4 ModelMatrix = Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0.0f));
 
         public readonly Camera camera = new(new(0.0f, 0.0f, 0.0f));
-        List<ShaderProgram> ShaderProgramList = [];
+        Dictionary<String, ShaderProgram> ShaderProgramList = new Dictionary<String, ShaderProgram>();
         private static readonly Thread _WorldThreadGeneration = new(new ThreadStart(WorldGeneration));
         private static readonly Thread _WorldThreadSaving = new(new ThreadStart(WorldSaving));
         private static readonly Thread _WorldThreadBlockProcessing = new(new ThreadStart(WorldLoadBlockData));
 
+        private static Stopwatch _timer;
+
         private static readonly World.World world = new("test.wld");
-        private static (float[], float[]) blockData = new();
+        private static (float[], float[], int[]) blockData = new();
 
         protected override void OnMouseMove(MouseMoveEventArgs e)
         {
@@ -42,6 +44,16 @@ namespace ConsoleApp1
                     camera.UpdateRotation(currentPos);
                 }
                 camera.Rotate();
+            }
+        }
+
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnMouseWheel(e);
+
+            if (cameraControl)
+            {
+                camera.SetSpeed(camera.GetSpeed() + e.OffsetY);
             }
         }
 
@@ -99,17 +111,26 @@ namespace ConsoleApp1
 
             if (input.IsKeyPressed(Keys.R))
             {
-                ShaderProgramList[0].ToggleDebug();
+                if (ShaderProgramList.TryGetValue("VoxelShader.Main", out ShaderProgram vx) && vx != null)
+                {
+                    vx.ToggleDebug();
+                }
             }
 
             if (input.IsKeyPressed(Keys.Q))
             {
-                ShaderProgramList[0].SetDrawMode(PrimitiveType.Lines);
+                if (ShaderProgramList.TryGetValue("VoxelShader.Main", out ShaderProgram vx))
+                {
+                    vx.SetDrawMode(PrimitiveType.Lines);
+                }
             }
 
             if (input.IsKeyPressed(Keys.E))
             {
-                ShaderProgramList[0].SetDrawMode(PrimitiveType.Triangles);
+                if (ShaderProgramList.TryGetValue("VoxelShader.Main", out ShaderProgram vx))
+                {
+                    vx.SetDrawMode(PrimitiveType.Triangles);
+                }
             }
         }
 
@@ -126,9 +147,9 @@ namespace ConsoleApp1
             Parallel.For(minY, maxY, y =>
             {
                 Console.WriteLine($"Generating Y-Level {y}...");
-                for (int x = minX; x < maxX; x++)
+                for (int x = minX; x <= maxX; x++)
                 {
-                    for (int z = minX; z < maxX; z++)
+                    for (int z = minX; z <= maxX; z++)
                     {
                         world.Generate((x, y, z));
                     }
@@ -142,11 +163,15 @@ namespace ConsoleApp1
 
         static void WorldSaving()
         {
+            Stopwatch s;
+            s = Stopwatch.StartNew();
             Console.WriteLine("Saving World...");
             foreach (var chunk in world.ChunkList)
             {
                 world.SaveChunkToFile(chunk);
             }
+            Console.WriteLine($"World data saved in {s.ElapsedMilliseconds / 1000.0} seconds");
+            s.Stop();
         }
 
 
@@ -155,29 +180,36 @@ namespace ConsoleApp1
             Console.WriteLine("Loading Block Data...");
             Stopwatch s = Stopwatch.StartNew();
 
-            var (Vertices, TexCoords) = BlockUtilities.GenerateBlockData(world.GetChunk(0).GetBlockVertices());
-            List<float> allData1 = new(Vertices);
-            List<float> allData2 = new(TexCoords);
+            List<float> allData1 = new();
+            List<float> allData2 = new();
+            List<int> allData3 = new();
 
-            for (int i = 1; i < world.ChunkList.Count; i++) // Start at chunk 2.
+            // Loop through all chunks (including chunk 0)
+
+            foreach (World.World.Chunk c in world.ChunkList)
             {
-                (float[], float[]) data = BlockUtilities.GenerateBlockData(world.GetChunk(i).GetBlockVertices());
-                allData1.AddRange(data.Item1);
-                allData2.AddRange(data.Item2);
+                var (Vertices, TexCoords, TileIDs) = BlockUtilities.GenerateBlockData(c.GetBlockVertices());
+                allData1.AddRange(Vertices);
+                allData2.AddRange(TexCoords);
+                allData3.AddRange(TileIDs);
+
             }
 
-            blockData = (allData1.ToArray(), allData2.ToArray());
+            blockData = (allData1.ToArray(), allData2.ToArray(), allData3.ToArray());
 
             s.Stop();
             Console.WriteLine($"Took {s.ElapsedMilliseconds / 1000.0} seconds to calculate block vertices");
         }
+
+        
+
 
         protected override void OnLoad() // Load graphics here
         {
             base.OnLoad();
 
             Title += ": OpenGL Version: " + GL.GetString(StringName.Version);
-
+            
             _WorldThreadGeneration.Start();
             _WorldThreadGeneration.Join();
             _WorldThreadSaving.Start();
@@ -207,14 +239,14 @@ namespace ConsoleApp1
 
             // Colors
             shaderProgram.SetArrayBufferF(1, 2, VertexAttribPointerType.Float, false, 2, 0, blockData.Item2, "texCoords");
-            blockData = default;
 
             // Block Data
-            shaderProgram.SetArrayBufferF(2, 1, VertexAttribPointerType.Float, false, 1, 0, Testing.Testing2.blockData, "blockData");
+            shaderProgram.SetArrayBufferI(2, 1, VertexAttribPointerType.Float, false, 1, 0, blockData.Item3, "blockData");
+            blockData = default;
 
             ShaderProgram.Unbind();
 
-            ShaderProgramList.Add(shaderProgram);
+            ShaderProgramList.Add("VoxelShader.Main", shaderProgram);
 
             GL.Enable(EnableCap.DepthTest);
             GL.DepthFunc(DepthFunction.Less);
@@ -233,16 +265,16 @@ namespace ConsoleApp1
             base.OnRenderFrame(e);
 
             //shaderProgram.SetMatrix4("model", ModelMatrix);
-            ShaderProgramList[0].SetMatrix4("view", camera.GetViewMatrix());
-            ShaderProgramList[0].SetMatrix4("projection", camera.GetProjectionMatrix());
+            ShaderProgramList["VoxelShader.Main"].SetMatrix4("view", camera.GetViewMatrix());
+            //ShaderProgramList[0].SetMatrix4("projection", camera.GetProjectionMatrix());
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            foreach (ShaderProgram s in ShaderProgramList)
+            foreach (var s in ShaderProgramList)
             {
-                s.Bind();
-                s.Use();
-                s.DrawArrays();
+                s.Value.Bind();
+                s.Value.Use();
+                s.Value.DrawArrays();
             }
 
             SwapBuffers();
@@ -263,9 +295,9 @@ namespace ConsoleApp1
         {
             base.OnUnload();
 
-            foreach (ShaderProgram s in ShaderProgramList)
+            foreach (var s in ShaderProgramList)
             {
-                s.Dispose();
+                s.Value.Dispose();
             }
             _WorldThreadGeneration.Join();
             _WorldThreadSaving.Join();

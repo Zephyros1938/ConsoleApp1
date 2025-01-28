@@ -60,18 +60,21 @@ namespace ConsoleApp1.World
     }
     public class BlockUtilities
     {
-        public static (float[] Vertices, float[] TexCoords) GenerateBlockData((float, float, float, uint)[] blocks)
+        public static (float[] Vertices, float[] TexCoords, int[] TileIDs) GenerateBlockData((float, float, float, int)[] blocks)
         {
             // Precompute sizes to avoid resizing arrays
             int vertexCount = blocks.Length * BlockConstants.Faces.Length * 3; // 3 vertices per face triangle
             int texCoordCount = vertexCount; // 2 floats per tex coord (x, y)
+            int tileIDCount = vertexCount;
 
             // Allocate arrays
             float[] vertices = new float[vertexCount * 3]; // 3 floats per vertex (x, y, z)
             float[] texCoords = new float[texCoordCount * 2]; // 2 floats per texture coord (u, v)
+            int[] tileIDs = new int[tileIDCount];
 
             int vertexIndex = 0;
             int texCoordIndex = 0;
+            int tileIDIndex = 0;
 
             foreach (var block in blocks)
             {
@@ -106,11 +109,13 @@ namespace ConsoleApp1.World
                         Vector2 texCoord = BlockConstants.TexCoords[texCoordIndices[i]];
                         texCoords[texCoordIndex++] = texCoord.X;
                         texCoords[texCoordIndex++] = texCoord.Y;
+
+                        tileIDs[tileIDIndex++] = block.Item4;
                     }
                 }
             }
 
-            return (vertices, texCoords);
+            return (vertices, texCoords, tileIDs);
         }
 
     }
