@@ -7,6 +7,7 @@ using ConsoleApp1.Shaders;
 using ConsoleApp1.Viewing;
 using ConsoleApp1.World;
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace ConsoleApp1
 {
@@ -137,10 +138,10 @@ namespace ConsoleApp1
         static void WorldGeneration()
         {
             Console.WriteLine("Starting World Generation...");
-            Vector2i worldDimensions = (world.worldSize.X / 2, world.worldSize.Y / 2);
+            Vector2i worldDimensions = (world.worldSize.X / 2, world.worldSize.Y/* / 2*/);
 
             int minY = -worldDimensions.Y;
-            int maxY = worldDimensions.Y;
+            int maxY = 0;//worldDimensions.Y;
             int minX = -worldDimensions.X;
             int maxX = worldDimensions.X;
 
@@ -174,24 +175,15 @@ namespace ConsoleApp1
             s.Stop();
         }
 
-
+        [MethodImpl(512)]
         static void WorldLoadBlockData()
         {
             Console.WriteLine("Loading Block Data...");
             Stopwatch s = Stopwatch.StartNew();
 
-            List<float> allData1 = new();
-            List<float> allData2 = new();
-            List<int> allData3 = new();
-
-            // Loop through all chunks (including chunk 0)
-            //var (Vertices, TexCoords, TileIDs) = BlockUtilities.GenerateBlockData(c.GetBlockVertices());
             var (Vertices, TexCoords, TileIDs) = BlockUtilities.GenerateBlockDataChunked([.. world.ChunkList]);
-            allData1.AddRange(Vertices);
-            allData2.AddRange(TexCoords);
-            allData3.AddRange(TileIDs);
 
-            blockData = (allData1.ToArray(), allData2.ToArray(), allData3.ToArray());
+            blockData = (Vertices, TexCoords, TileIDs);
 
             s.Stop();
             Console.WriteLine($"Took {s.ElapsedMilliseconds / 1000.0} seconds to calculate block vertices");
@@ -248,7 +240,7 @@ namespace ConsoleApp1
             GL.DepthFunc(DepthFunction.Less);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
-            //GL.Enable(EnableCap.CullFace);
+            GL.Enable(EnableCap.CullFace);
             GL.Enable(EnableCap.Texture2D);
 
             CursorState = CursorState.Grabbed;

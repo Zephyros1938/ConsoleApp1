@@ -17,12 +17,12 @@ int textureTransparentID = 80;
 void main()
 {
     int ID = tileID;
-    if(ID==-1){
+    float x = mod(float(mod(ID, 80)), 8.0);
+    float y = floor(float(mod(ID, 80)) / 8.0);
+    if(ID==512){
         FragColor = vec4(0.,0.,0.,1.);
     }
     else {
-        float x = mod(float(mod(ID, 80)), 8.0);
-        float y = floor(float(mod(ID, 80)) / 8.0);
         if(ID>=80)
         {
             FragColor = texture(transparent, (texCoord + vec2(x,y)) * vec2(0.125,0.1));
@@ -34,7 +34,7 @@ void main()
     };
     if(debug==1)
     {
-        FragColor = vec4(texCoord.x, texCoord.y, 0., 1.);
+        FragColor = vec4(texCoord.x, texCoord.y, (x+y)/2, 1.);
     }
     //FragColor = vec4(texCoord.x, texCoord.y, 0. ,1.);
 }

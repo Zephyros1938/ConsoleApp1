@@ -2,22 +2,22 @@ MSBuild version 17.8.5+b5265ef37 for .NET
   Determining projects to restore...
   All projects are up-to-date for restore.
 /home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Scheduler/Scheduler.cs(7,58): warning CS8618: Non-nullable field 'func' must contain a non-null value when exiting constructor.nConsider declaring the field as nullable.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
-/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(114,75): warning CS8600: Converting null literal or possible null value to non-nullable type.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
-/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(122,75): warning CS8600: Converting null literal or possible null value to non-nullable type.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
-/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(130,75): warning CS8600: Converting null literal or possible null value to non-nullable type.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
-/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(26,34): warning CS8618: Non-nullable field '_timer' must contain a non-null value when exiting constructor.nConsider declaring the field as nullable.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
-/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(26,34): warning CS0169: The field 'Game._timer' is never used [/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
+/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(115,75): warning CS8600: Converting null literal or possible null value to non-nullable type.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
+/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(123,75): warning CS8600: Converting null literal or possible null value to non-nullable type.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
+/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(131,75): warning CS8600: Converting null literal or possible null value to non-nullable type.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
+/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(27,34): warning CS8618: Non-nullable field '_timer' must contain a non-null value when exiting constructor.nConsider declaring the field as nullable.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
+/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(27,34): warning CS0169: The field 'Game._timer' is never used [/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
   ConsoleApp1 -> /home/zephyros/Coding/CS/ConsoleApp1/bin/Debug/net8.0/ConsoleApp1.dll
 
 Build succeeded.
 
 /home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Scheduler/Scheduler.cs(7,58): warning CS8618: Non-nullable field 'func' must contain a non-null value when exiting constructor.nConsider declaring the field as nullable.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
-/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(114,75): warning CS8600: Converting null literal or possible null value to non-nullable type.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
-/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(122,75): warning CS8600: Converting null literal or possible null value to non-nullable type.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
-/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(130,75): warning CS8600: Converting null literal or possible null value to non-nullable type.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
-/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(26,34): warning CS8618: Non-nullable field '_timer' must contain a non-null value when exiting constructor.nConsider declaring the field as nullable.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
-/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(26,34): warning CS0169: The field 'Game._timer' is never used [/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
+/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(115,75): warning CS8600: Converting null literal or possible null value to non-nullable type.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
+/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(123,75): warning CS8600: Converting null literal or possible null value to non-nullable type.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
+/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(131,75): warning CS8600: Converting null literal or possible null value to non-nullable type.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
+/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(27,34): warning CS8618: Non-nullable field '_timer' must contain a non-null value when exiting constructor.nConsider declaring the field as nullable.n[/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
+/home/zephyros/Coding/CS/ConsoleApp1/Assets/Scripts/Game.cs(27,34): warning CS0169: The field 'Game._timer' is never used [/home/zephyros/Coding/CS/ConsoleApp1/ConsoleApp1.csproj]
     6 Warning(s)
     0 Error(s)
 
-Time Elapsed 00:00:02.10
+Time Elapsed 00:00:02.61

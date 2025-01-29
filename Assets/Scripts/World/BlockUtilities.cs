@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using OpenTK.Mathematics;
 
 namespace ConsoleApp1.World
@@ -23,12 +24,12 @@ namespace ConsoleApp1.World
 
         public static readonly Vector3i[] directions = new Vector3i[]
         {
+            new Vector3i(0, 0, 1),
+            new Vector3i(0, 0, -1),
             new Vector3i(0, 1, 0),
             new Vector3i(0, -1, 0),
             new Vector3i(1, 0, 0),
             new Vector3i(-1, 0, 0),
-            new Vector3i(0, 0, 1),
-            new Vector3i(0, 0, -1)
         };
 
         // Texture coordinates
@@ -128,6 +129,7 @@ namespace ConsoleApp1.World
             return (vertices, texCoords, tileIDs);
         }
 
+        [MethodImpl(512)]
         public static (float[] Vertices, float[] TexCoords, int[] TileIDs) GenerateBlockDataChunked(World.Chunk[] chunks)
         {
             // Use dynamic lists to collect data
@@ -135,7 +137,7 @@ namespace ConsoleApp1.World
             List<float> texCoords = new List<float>();
             List<int> tileIDs = new List<int>();
 
-            foreach (var chunk in chunks)
+            foreach (World.Chunk chunk in chunks)
             {
                 for (int y = 0; y < World.chunkSize.Y; y++)
                 {
@@ -143,10 +145,11 @@ namespace ConsoleApp1.World
                     {
                         for (int z = 0; z < World.chunkSize.Z; z++)
                         {
-                            int tileID = chunk.BlockData[x + World.chunkSize.X * (y + World.chunkSize.Y * z)].ID;
-                            if(tileID==-1)
+                            World.Block b = chunk.BlockData[x + World.chunkSize.X * (y + World.chunkSize.Y * z)];
+                            int tileID = b.ID;
+                            if(tileID==512)
                                 continue;
-                            Vector3 blockPosition = new Vector3(x, y, z);
+                            Vector3 blockPosition = new Vector3(b.X, b.Y, b.Z);
 
                             // Check visibility for each face
                             for (int faceIndex = 0; faceIndex < BlockConstants.Faces.Length; faceIndex++)
@@ -168,8 +171,8 @@ namespace ConsoleApp1.World
                                     // Add vertex coordinates
                                     Vector3 vertex = blockPosition + BlockConstants.Offsets[offsetIndices[i]] * BlockConstants.CubeSize;
                                     vertices.Add(vertex.X);
-                                    vertices.Add(vertex.Z);
                                     vertices.Add(vertex.Y);
+                                    vertices.Add(vertex.Z);
 
                                     // Add texture coordinates
                                     Vector2 texCoord = BlockConstants.TexCoords[texCoordIndices[i]];

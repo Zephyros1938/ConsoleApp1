@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Runtime.CompilerServices;
 using ConsoleApp1.DataManagement;
 using OpenTK.Mathematics;
 
@@ -7,7 +8,7 @@ namespace ConsoleApp1.World
     public class World
     {
         public static readonly Vector3i chunkSize = (25, 25, 25);
-        private static readonly Vector2i _worldSize = (3, 9);
+        private static readonly Vector2i _worldSize = (9,3);
         public readonly Vector2i worldSize = (_worldSize.X, _worldSize.Y);
         public HashSet<Chunk> ChunkList { get; } = new(capacity: _worldSize.X * _worldSize.Y * _worldSize.X);
         public static readonly int blocksPerChunk = chunkSize.X * chunkSize.Y * chunkSize.Z;
@@ -20,7 +21,7 @@ namespace ConsoleApp1.World
             UserData.WorldManagement.DeleteFile(worldName);
             Console.WriteLine($"Worlds Path: {UserData._WorldsPath}");
         }
-
+        [MethodImpl(512)]
         public void Generate(Vector3 location)
         {
             Chunk currentChunk = new(location);
@@ -43,6 +44,10 @@ namespace ConsoleApp1.World
                         {
                             randomBlockID = BiomeManagement.Caves.GetRandomBlock();
                         }
+                        else if (pos.Y >= BiomeManagement.skyLevel)
+                        {
+                            randomBlockID = BiomeManagement.SkyIslands.GetRandomBlock();
+                        }
                         else
                         {
                             randomBlockID = BiomeManagement.Grassland.GetRandomBlock();
@@ -59,13 +64,14 @@ namespace ConsoleApp1.World
             ChunkList.Add(currentChunk);
         }
 
+        [MethodImpl(512)]
         public void SaveChunkToFile(Chunk chunk)
         {
             using MemoryStream ms = new();
             Span<byte> buffer = stackalloc byte[4];
             // Write Chunk Header
-            BitConverter.TryWriteBytes(buffer, 0xFEFEFEFE);
-            ms.Write(buffer);
+            //BitConverter.TryWriteBytes(buffer, 0xFEFEFEFE);
+            //ms.Write(buffer);
             BitConverter.TryWriteBytes(buffer, chunk.Center.X);
             ms.Write(buffer);
             BitConverter.TryWriteBytes(buffer, chunk.Center.Y);
@@ -169,7 +175,7 @@ namespace ConsoleApp1.World
                 return [.. vertices];
             }
 
-
+            [MethodImpl(512)]
             public bool IsBlockVisible(int x, int y, int z)
             {
                 // Check if neighbors exist
@@ -177,7 +183,7 @@ namespace ConsoleApp1.World
                          HasBlockAt(x, y + 1, z) && HasBlockAt(x, y - 1, z) &&
                          HasBlockAt(x, y, z + 1) && HasBlockAt(x, y, z - 1));
             }
-
+            [MethodImpl(512)]
             public bool HasBlockAt(int x, int y, int z)
             {
                 // Check if block is inside chunk bounds
@@ -190,9 +196,9 @@ namespace ConsoleApp1.World
                 // Check if a block exists at this position
                 int index = x + chunkSize.X * (y + chunkSize.Y * z);
                 //Console.WriteLine($"{index}: {BlockData[index].ID}: {BlockData[index].ID != 0}");
-                return BlockData[index].ID != -1; // Adjust based on how "empty" blocks are defined
+                return BlockData[index].ID != 512; // Adjust based on how "empty" blocks are defined
             }
-
+            [MethodImpl(512)]
             public bool HasBlockAt(Vector3i loc)
             {
                 // Check if block is inside chunk bounds
@@ -205,7 +211,7 @@ namespace ConsoleApp1.World
                 // Check if a block exists at this position
                 int index = loc.X + chunkSize.X * (loc.Y + chunkSize.Y * loc.Z);
                 //Console.WriteLine($"{index}: {BlockData[index].ID}: {BlockData[index].ID != 0}");
-                return BlockData[index].ID != -1; // Adjust based on how "empty" blocks are defined
+                return BlockData[index].ID != 512; // Adjust based on how "empty" blocks are defined
             }
         }
 
@@ -234,26 +240,36 @@ namespace ConsoleApp1.World
             "Caves"
         );
 
+        public static Biome SkyIslands = new Biome(
+            [
+                (Tiles.TileIDs.air, 100f),
+                (Tiles.TileIDs.cloud, 50f),
+                (Tiles.TileIDs.cloudStormy, 5f),
+            ],
+            "SkyIslands"
+        );
+
         public static Biome Grassland = new Biome(
             [
-                (Tiles.TileIDs.dirt, 5f),
-                (Tiles.TileIDs.air, 100f),
+                (Tiles.TileIDs.dirt, 100f),
+                //(Tiles.TileIDs.air, 5f),
             ],
             "Grasslands"
         );
 
-        public static Dictionary<string, Biome> BiomeKey = new Dictionary<string, Biome>()
+        public static Dictionary<string, Biome> BiomeKey = new()
         {
             { "Grasslands", Grassland },
-            { "Caves", Caves }
+            { "Caves", Caves },
+            { "SkyIslands", SkyIslands }
         };
-
+        
         public struct Biome
         {
             public (int, float)[] internalTileWeights;
             public string Name;
             private readonly Random rand;
-
+            
             public Biome((int, float)[] TileWeights, string Name)
             {
                 this.Name = Name;
@@ -275,7 +291,7 @@ namespace ConsoleApp1.World
                     internalTileWeights[i] = (TileWeights[i].Item1, cumulativeWeight); // Store cumulative weights
                 }
             }
-
+            [MethodImpl(512)]
             public readonly int GetRandomBlock()
             {
                 double randNumber = rand.NextDouble();
@@ -286,7 +302,7 @@ namespace ConsoleApp1.World
                         return tileWeight.Item1;
                     }
                 }
-                return -1;
+                return 512;
             }
         };
     }
