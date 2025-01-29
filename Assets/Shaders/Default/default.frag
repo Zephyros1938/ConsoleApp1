@@ -18,7 +18,7 @@ void main()
 {
     int ID = tileID;
     if(ID==-1){
-        FragColor = vec4(0.,0.,0.,0.);
+        FragColor = vec4(0.,0.,0.,1.);
     }
     else {
         float x = mod(float(mod(ID, 80)), 8.0);

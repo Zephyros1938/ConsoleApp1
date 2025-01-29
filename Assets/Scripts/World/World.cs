@@ -7,7 +7,7 @@ namespace ConsoleApp1.World
     public class World
     {
         public static readonly Vector3i chunkSize = (25, 25, 25);
-        private static readonly Vector2i _worldSize = (3, 3);
+        private static readonly Vector2i _worldSize = (3, 9);
         public readonly Vector2i worldSize = (_worldSize.X, _worldSize.Y);
         public HashSet<Chunk> ChunkList { get; } = new(capacity: _worldSize.X * _worldSize.Y * _worldSize.X);
         public static readonly int blocksPerChunk = chunkSize.X * chunkSize.Y * chunkSize.Z;
@@ -236,7 +236,7 @@ namespace ConsoleApp1.World
 
         public static Biome Grassland = new Biome(
             [
-                (Tiles.TileIDs.dirt, 25f),
+                (Tiles.TileIDs.dirt, 5f),
                 (Tiles.TileIDs.air, 100f),
             ],
             "Grasslands"

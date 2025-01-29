@@ -143,6 +143,9 @@ namespace ConsoleApp1.World
                     {
                         for (int z = 0; z < World.chunkSize.Z; z++)
                         {
+                            int tileID = chunk.BlockData[x + World.chunkSize.X * (y + World.chunkSize.Y * z)].ID;
+                            if(tileID==-1)
+                                continue;
                             Vector3 blockPosition = new Vector3(x, y, z);
 
                             // Check visibility for each face
@@ -154,17 +157,13 @@ namespace ConsoleApp1.World
                                 Vector3i direction = BlockConstants.directions[faceIndex / 2];
                                 //Console.WriteLine($"Direction: {direction}");
 
-                                
-                                if (chunk.HasBlockAt((x, y, z) + direction))
+
+                                if (chunk.HasBlockAt((x, y, z) + direction) || !chunk.IsBlockVisible(x,y,z))
                                     continue;
 
                                 // Add face vertices and texture coordinates
                                 for (int i = 0; i < 3; i++)
                                 {
-
-                                    // Add tile ID (for this face)
-                                    int tileID = chunk.BlockData[x + World.chunkSize.X * (y + World.chunkSize.Y * z)].ID;
-                                    tileIDs.Add(tileID);
 
                                     // Add vertex coordinates
                                     Vector3 vertex = blockPosition + BlockConstants.Offsets[offsetIndices[i]] * BlockConstants.CubeSize;
@@ -176,6 +175,9 @@ namespace ConsoleApp1.World
                                     Vector2 texCoord = BlockConstants.TexCoords[texCoordIndices[i]];
                                     texCoords.Add(texCoord.X);
                                     texCoords.Add(texCoord.Y);
+
+                                    // Add tile ID (for this face)
+                                    tileIDs.Add(tileID);
                                 }
                             }
                         }
