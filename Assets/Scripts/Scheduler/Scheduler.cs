@@ -4,7 +4,7 @@ namespace ConsoleApp1.Scheduler
 {
     class Routine
     {
-        private static System.Timers.ElapsedEventHandler func;
+        private static System.Timers.ElapsedEventHandler? func;
         private static int interval;
 
         public Routine(System.Timers.ElapsedEventHandler func, int interval){

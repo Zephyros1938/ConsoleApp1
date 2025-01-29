@@ -1,3 +1,5 @@
+using OpenTK.Mathematics;
+
 namespace ConsoleApp1.Utilities
 {
     public readonly struct CMath
@@ -11,6 +13,28 @@ namespace ConsoleApp1.Utilities
 
         public CMath()
         {
+        }
+    }
+
+    public class CMathFunctions
+    {
+        public static float Vec3Magnitude(Vector3 p1, Vector3 p2)
+        {
+            return Vector3.Distance(p1, p2);
+        }
+
+        public static float Vec3MagnitudeSquared(Vector3 p1, Vector3 p2)
+        {
+            return Vector3.DistanceSquared(p1, p2);
+        }
+
+        public static Vector3 Vec3SnapToIncrement(Vector3 p1, Vector3 incr)
+        {
+            return new(
+                MathF.Round(p1.X / incr.X) * incr.X,
+                MathF.Round(p1.Y / incr.Y) * incr.Y,
+                MathF.Round(p1.Z / incr.Z) * incr.Z
+            );
         }
     }
 }

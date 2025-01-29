@@ -7,14 +7,28 @@ namespace ConsoleApp1.World
 {
     public class World
     {
-        public static readonly Vector3i chunkSize = (25, 25, 25);
-        private static readonly Vector2i _worldSize = (9,3);
+        private static readonly Vector2i _worldSize = (5, 5);
         public readonly Vector2i worldSize = (_worldSize.X, _worldSize.Y);
-        public HashSet<Chunk> ChunkList { get; } = new(capacity: _worldSize.X * _worldSize.Y * _worldSize.X);
-        public static readonly int blocksPerChunk = chunkSize.X * chunkSize.Y * chunkSize.Z;
-
-        static uint chunkIndex = 0;
         private readonly string worldName;
+
+        #region Chunk Variables
+        public static readonly Vector3i chunkSize = (25, 25, 25);
+        private HashSet<Chunk> _ChunkList = new(capacity: _worldSize.X * _worldSize.Y * _worldSize.X);
+        public class ChunkListEventArgs : EventArgs
+        {
+            public HashSet<Chunk>? ChunkList { get; set; }
+        }
+        public delegate void ChunkListChangedHandler(object source, ChunkListEventArgs e);
+        public event ChunkListChangedHandler? ChunkListChanged;
+        protected virtual void OnChunkListChanged()
+        {
+            ChunkListChanged?.Invoke(this, new ChunkListEventArgs { ChunkList = _ChunkList });
+        }
+        public HashSet<Chunk> ChunkList { get { return _ChunkList; } set { _ChunkList = value; OnChunkListChanged(); } }
+        public static readonly int blocksPerChunk = chunkSize.X * chunkSize.Y * chunkSize.Z;
+        static uint chunkIndex = 0;
+
+        #endregion
         public World(string worldName)
         {
             this.worldName = worldName;
@@ -38,23 +52,30 @@ namespace ConsoleApp1.World
                 {
                     for (int z = 0; z < chunkSize.Z; z++)
                     {
-                        int randomBlockID;
+                        int randomBlockID = 512;
                         Vector3 pos = (x + LocationOffset.X, y + LocationOffset.Y, z + LocationOffset.Z);
-                        if (pos.Y <= BiomeManagement.caveLevel)
+                        // if (pos.Y <= BiomeManagement.caveLevel)
+                        // {
+                        //     randomBlockID = BiomeManagement.Caves.GetRandomBlock();
+                        // }
+                        // else if (pos.Y >= BiomeManagement.skyLevel)
+                        // {
+                        //     randomBlockID = BiomeManagement.SkyIslands.GetRandomBlock();
+                        // }
+                        // else
+                        // {
+                        //     randomBlockID = BiomeManagement.Grassland.GetRandomBlock();
+                        //     // if (randomBlockID == Tiles.TileIDs.dirt && !currentChunk.HasBlockAt(x, y + 1, z))
+                        //     // {
+                        //     //     randomBlockID = Tiles.TileIDs.grassTop;
+                        //     // }
+                        // }
+                        foreach (var item in BiomeManagement.BiomeKey)
                         {
-                            randomBlockID = BiomeManagement.Caves.GetRandomBlock();
-                        }
-                        else if (pos.Y >= BiomeManagement.skyLevel)
-                        {
-                            randomBlockID = BiomeManagement.SkyIslands.GetRandomBlock();
-                        }
-                        else
-                        {
-                            randomBlockID = BiomeManagement.Grassland.GetRandomBlock();
-                            // if (randomBlockID == Tiles.TileIDs.dirt && !currentChunk.HasBlockAt(x, y + 1, z))
-                            // {
-                            //     randomBlockID = Tiles.TileIDs.grassTop;
-                            // }
+                            if(pos.Y<=item.Value.heightLevel)
+                            {
+                                randomBlockID = item.Value.GetRandomBlock();
+                            }
                         }
                         //randomBlockID = 0;
                         currentChunk.BlockData[currentBlock++] = new(pos.X, pos.Y, pos.Z, randomBlockID);
@@ -227,29 +248,28 @@ namespace ConsoleApp1.World
     #region biome management
     public class BiomeManagement
     {
-        public static float caveLevel = -10f;
-        public static float skyLevel = 10f;
-
-        public static Biome Caves = new Biome(
+        private static Biome Caves = new(
             [
                 (Tiles.TileIDs.rock, 100f),
                 (Tiles.TileIDs.rockOreCoal, 10f),
                 (Tiles.TileIDs.rockOreIron, 1f),
                 (Tiles.TileIDs.rockOreGold, 0.1f)
             ],
-            "Caves"
+            "Caves",
+            -50f
         );
 
-        public static Biome SkyIslands = new Biome(
+        private static Biome SkyIslands = new(
             [
                 (Tiles.TileIDs.air, 100f),
                 (Tiles.TileIDs.cloud, 50f),
                 (Tiles.TileIDs.cloudStormy, 5f),
             ],
-            "SkyIslands"
+            "SkyIslands",
+            50f
         );
 
-        public static Biome Grassland = new Biome(
+        private static Biome Grassland = new(
             [
                 (Tiles.TileIDs.dirt, 100f),
                 //(Tiles.TileIDs.air, 5f),
@@ -259,20 +279,24 @@ namespace ConsoleApp1.World
 
         public static Dictionary<string, Biome> BiomeKey = new()
         {
+            { "SkyIslands", SkyIslands },
             { "Grasslands", Grassland },
             { "Caves", Caves },
-            { "SkyIslands", SkyIslands }
         };
-        
+
         public struct Biome
         {
             public (int, float)[] internalTileWeights;
+            public float heightLevel;
             public string Name;
             private readonly Random rand;
+
             
-            public Biome((int, float)[] TileWeights, string Name)
+
+            public Biome((int, float)[] TileWeights, string Name, float heightLevel = 0f)
             {
                 this.Name = Name;
+                this.heightLevel = heightLevel;
                 rand = new Random();
 
                 float totalWeight = 0f;

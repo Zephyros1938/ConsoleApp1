@@ -1,3 +1,4 @@
+using System.Diagnostics.Tracing;
 using System.Runtime.CompilerServices;
 using OpenTK.Mathematics;
 
@@ -147,7 +148,7 @@ namespace ConsoleApp1.World
                         {
                             World.Block b = chunk.BlockData[x + World.chunkSize.X * (y + World.chunkSize.Y * z)];
                             int tileID = b.ID;
-                            if(tileID==512)
+                            if (tileID == 512)
                                 continue;
                             Vector3 blockPosition = new Vector3(b.X, b.Y, b.Z);
 
@@ -161,7 +162,7 @@ namespace ConsoleApp1.World
                                 //Console.WriteLine($"Direction: {direction}");
 
 
-                                if (chunk.HasBlockAt((x, y, z) + direction) || !chunk.IsBlockVisible(x,y,z))
+                                if (chunk.HasBlockAt((x, y, z) + direction))
                                     continue;
 
                                 // Add face vertices and texture coordinates
@@ -192,5 +193,63 @@ namespace ConsoleApp1.World
             return (vertices.ToArray(), texCoords.ToArray(), tileIDs.ToArray());
         }
 
+        [MethodImpl(512)]
+        public static void GenerateBlockDataChunkedAdditive(World w, (float[] Vertices, float[] TexCoords, int[] TileIDs) dataList)
+        {
+            w.ChunkListChanged += (o, e) =>
+            {
+                dataList = new();
+                foreach (World.Chunk chunk in w.ChunkList)
+                {
+                    for (int y = 0; y < World.chunkSize.Y; y++)
+                    {
+                        for (int x = 0; x < World.chunkSize.X; x++)
+                        {
+                            for (int z = 0; z < World.chunkSize.Z; z++)
+                            {
+                                World.Block b = chunk.BlockData[x + World.chunkSize.X * (y + World.chunkSize.Y * z)];
+                                int tileID = b.ID;
+                                if (tileID == 512)
+                                    continue;
+                                Vector3 blockPosition = new Vector3(b.X, b.Y, b.Z);
+
+                                // Check visibility for each face
+                                for (int faceIndex = 0; faceIndex < BlockConstants.Faces.Length; faceIndex++)
+                                {
+                                    var (offsetIndices, texCoordIndices) = BlockConstants.Faces[faceIndex];
+
+                                    // Skip face if an adjacent block exists
+                                    Vector3i direction = BlockConstants.directions[faceIndex / 2];
+                                    //Console.WriteLine($"Direction: {direction}");
+
+
+                                    if (chunk.HasBlockAt((x, y, z) + direction)/* || !chunk.IsBlockVisible(x, y, z)*/)
+                                        continue;
+
+                                    // Add face vertices and texture coordinates
+                                    for (int i = 0; i < 3; i++)
+                                    {
+
+                                        // Add vertex coordinates
+                                        Vector3 vertex = blockPosition + BlockConstants.Offsets[offsetIndices[i]] * BlockConstants.CubeSize;
+                                        dataList.Vertices.Append(vertex.X);
+                                        dataList.Vertices.Append(vertex.Y);
+                                        dataList.Vertices.Append(vertex.Z);
+
+                                        // Add texture coordinates
+                                        Vector2 texCoord = BlockConstants.TexCoords[texCoordIndices[i]];
+                                        dataList.TexCoords.Append(texCoord.X);
+                                        dataList.TexCoords.Append(texCoord.Y);
+
+                                        // Add tile ID (for this face)
+                                        dataList.TileIDs.Append(tileID);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+        }
     }
 }

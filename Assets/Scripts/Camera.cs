@@ -16,16 +16,42 @@ namespace ConsoleApp1.Viewing
         float far = 100.0f;
         float FOV = 45.0f;
 
+        public Vector3i chunkLoadDistance = (5, 5, 5);
+
         Vector3 cameraTarget = Vector3.Zero;
 
-        public Vector3 position
+        #region Positioning
+        private Vector3 _position
         = new(0.0f, 0.0f, 3.0f);
+
+        public Vector3 position
+        {
+            get { return _position; }
+            set
+            {
+                _position = value;
+            }
+        }
+
+        #endregion
         Vector3 front = new(0.0f, 0.0f, -1.0f);
         Vector3 up = Vector3.UnitY;
 
         Vector2 lastPos = new(0.0f, 0.0f);
 
-        Matrix4 view;
+        private Matrix4 _view;
+        public Matrix4 View { get { return _view; } set {_view = value; OnCameraViewChanged(); } }
+
+        public class CameraEventArgs : EventArgs
+        {
+            public Matrix4 View { get; set; }
+        }
+        public delegate void CameraEventHandler(object source, CameraEventArgs e);
+        public event CameraEventHandler? CameraViewChanged;
+        protected virtual void OnCameraViewChanged()
+        {
+            CameraViewChanged?.Invoke(this, new CameraEventArgs { View = _view });
+        }
         Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45f), 100 / 100, .01f, 100f);
 
         public Camera(Vector3? position = null, Matrix4? projection = null)
@@ -38,7 +64,7 @@ namespace ConsoleApp1.Viewing
             {
                 this.projection = projection.Value;
             }
-            view = Matrix4.LookAt(this.position, this.position + front, up);
+            View = Matrix4.LookAt(this.position, this.position + front, up);
         }
 
         public void SetPosition(Vector3 position) => this.position = position;
@@ -112,7 +138,7 @@ namespace ConsoleApp1.Viewing
             }
         }
 
-        public Matrix4 GetViewMatrix() { view = Matrix4.LookAt(position, position + front, up); return view; }
+        public Matrix4 GetViewMatrix() { View = Matrix4.LookAt(position, position + front, up); return View; }
         public Matrix4 GetProjectionMatrix() => projection;
         public Vector3 GetPosition() => position;
         public Vector3 GetFront() => front;
