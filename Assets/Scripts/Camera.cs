@@ -50,6 +50,7 @@ namespace ConsoleApp1.Viewing
         public event CameraEventHandler? CameraViewChanged;
         protected virtual void OnCameraViewChanged()
         {
+            //_view = GetViewMatrix();
             CameraViewChanged?.Invoke(this, new CameraEventArgs { View = _view });
         }
         Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45f), 100 / 100, .01f, 100f);

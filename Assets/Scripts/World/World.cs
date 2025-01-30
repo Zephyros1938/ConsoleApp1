@@ -7,7 +7,7 @@ namespace ConsoleApp1.World
 {
     public class World
     {
-        private static readonly Vector2i _worldSize = (5, 5);
+        private static readonly Vector2i _worldSize = (10, 10);
         public readonly Vector2i worldSize = (_worldSize.X, _worldSize.Y);
         private readonly string worldName;
 

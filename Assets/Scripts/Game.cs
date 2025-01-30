@@ -241,7 +241,7 @@ namespace ConsoleApp1
             // Block Data
             shaderProgram.SetArrayBufferI(2, 1, VertexAttribPointerType.Float, false, 1, 0, blockData.Item3, "blockData");
 
-            camera.CameraViewChanged += (o, e) => shaderProgram.SetMatrix4("view", e.View);
+            //camera.CameraViewChanged += (o, e) => shaderProgram.SetMatrix4("view", e.View);
             blockData = default;
 
             ShaderProgram.Unbind();
@@ -265,7 +265,7 @@ namespace ConsoleApp1
             base.OnRenderFrame(e);
 
             //shaderProgram.SetMatrix4("model", ModelMatrix);
-            
+            ShaderProgramList["VoxelShader.Main"].SetMatrix4("view", camera.GetViewMatrix());
             //ShaderProgramList[0].SetMatrix4("projection", camera.GetProjectionMatrix());
 
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
